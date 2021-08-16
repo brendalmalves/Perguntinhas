@@ -70,3 +70,8 @@ sobre = do
 	doc <- readFile file
 	putStrLn doc
 	showMenu
+
+invalidOption :: (IO()) -> IO()
+invalidOption f = do
+	putStrLn("Selecione uma alternativa válida")
+	f

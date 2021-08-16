@@ -25,7 +25,7 @@ menus x
 	| x == "3" = showRecordes
 	| x == "4" = sobre
 	| x == "5" = exitSuccess
-	| otherwise = invalidOption
+	| otherwise = invalidOption showMenu
 
 menuJogador :: IO()
 menuJogador = do
@@ -40,7 +40,7 @@ opcaoJogador :: String -> IO()
 opcaoJogador x
 	| x == "1" = jogo --ainda nao sei qual vai ser o nome dessa funcao entao da pra alterar depois
 	| x == "2" = showMenu
-	| otherwise = invalidOption
+	| otherwise = invalidOption menuJogador
 
 menuAdministrador :: IO()
 menuAdministrador = do
@@ -57,7 +57,7 @@ opcaoAdministrador x
 	| x == "1" = loginAdm
 	| x == "2" = criaAdm
 	| x == "3" = showMenu
-	| otherwise = invalidOption
+	| otherwise = invalidOption menuAdministrador
 
 showRecordes :: IO()
 showRecordes = do

@@ -4,10 +4,10 @@ import System.IO
 
 main :: IO()
 main = do
-	putStrLn $ "Boas vindas!"
-	putStrLn $ "Perguntinhas é um jogo de perguntas e resposta"
-	putStrLn $ "Selecione uma das opções abaixo:\n"
-	showMenu
+    putStrLn $ "Boas vindas!"
+    putStrLn $ "Perguntinhas é um jogo de perguntas e respostas"
+    putStrLn $ "Selecione uma das opções abaixo:\n"
+    showMenu
 
 showMenu :: IO()
 showMenu = do
@@ -15,10 +15,19 @@ showMenu = do
 	putStrLn("2 - Sou administrador")
 	putStrLn("3 - Ver recordes")
 	putStrLn("4 - Sobre o jogo")
-	putStrLn("5 - Sair")
+	putStrLn("5 - Sair\n")
 
 	opcao <- getLine
 	menus opcao
+
+confirmMenu :: IO ()
+confirmMenu = do
+	putStrLn "Tem certeza que deseja excluir sua conta? Essa ação é irreversível."
+	putStrLn("1 - Não")
+	putStrLn("2 - Sim")
+
+	opcao <- getLine
+	opcaoExcluiAdm opcao
 
 menus :: String -> IO()
 menus x
@@ -31,7 +40,7 @@ menus x
 
 menuJogador :: IO()
 menuJogador = do
-	putStrLn("Selecione uma das opções abaixo:\n")
+	putStrLn("\nSelecione uma das opções abaixo:\n")
 	putStrLn("1 - Iniciar jogo")
 	putStrLn("2 - Retornar para o menu")
 
@@ -40,7 +49,7 @@ menuJogador = do
 
 opcaoJogador :: String -> IO()
 opcaoJogador x
-	| x == "1" = jogo --ainda nao sei qual vai ser o nome dessa funcao entao da pra alterar depois
+--	| x == "1" = jogo --ainda nao sei qual vai ser o nome dessa funcao entao da pra alterar depois
 	| x == "2" = showMenu
 	| otherwise = invalidOption menuJogador
 
@@ -59,7 +68,8 @@ segundoMenuAdministrador = do
 	putStrLn("Escolha o que você deseja fazer:\n")
 	putStrLn("1 - Cadastrar uma nova Perguntinha")
 	putStrLn("2 - Modificar ranking")
-	putStrLn("3 - Retornar para o menu")
+	putStrLn("3 - Excluir minha conta")
+	putStrLn("4 - Retornar para o menu")
 	opcao <- getLine
 	segundaTelaOpcaoAdministrador opcao
 
@@ -74,7 +84,8 @@ segundaTelaOpcaoAdministrador :: String -> IO()
 segundaTelaOpcaoAdministrador x
 	| x == "1" = print "cadastraPergunta" -- test
 	| x == "2" = print "modificaRanking" -- test
-	| x == "3" = showMenu
+	| x == "3" = confirmMenu
+	| x == "4" = showMenu
 	| otherwise = invalidOption menuAdministrador
 
 showRecordes :: IO()
@@ -122,6 +133,32 @@ criaAdm = do
     else do
         putStrLn "Administrador já cadastrado, utilize sua senha para logar."
         loginAdm
+
+excluiAdm :: IO ()
+excluiAdm = do
+	putStrLn "Insira sua senha: "
+	senha <- getLine
+	file <- openFile "admin.txt" ReadMode
+	senhaCadastrada <- hGetContents file
+
+	if senha == senhaCadastrada then do
+		file <- openFile "admin.txt" WriteMode
+		hPutStr file ""
+		hFlush file
+		hClose file
+		putStrLn "Cadastro excluído com sucesso!"
+		showMenu
+	else do
+		putStrLn "Senha incorreta. Tente novamente."
+		excluiAdm
+     	
+
+opcaoExcluiAdm :: String -> IO ()
+opcaoExcluiAdm x
+	| x == "1" = segundoMenuAdministrador
+	| x == "2" = excluiAdm
+	| otherwise = invalidOption segundoMenuAdministrador
+
 
 sobre :: IO()
 sobre = do

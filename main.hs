@@ -54,7 +54,7 @@ menus x
 
 menuJogador :: IO()
 menuJogador = do
-	putStrLn("\nSelecione uma das opções abaixo:\n")
+	putStrLn("\nSelecione uma das opções abaixo:")
 	putStrLn("1 - Iniciar jogo")
 	putStrLn("2 - Retornar para o menu")
 
@@ -69,7 +69,7 @@ opcaoJogador x
 
 menuAdministrador :: IO()
 menuAdministrador = do
-	putStrLn("Selecione uma das opções abaixo:\n")
+	putStrLn("\nSelecione uma das opções abaixo:")
 	putStrLn("1 - Já tenho cadastro (fazer login)")
 	putStrLn("2 - Não tenho cadastro (criar conta)")
 	putStrLn("3 - Retornar para o menu")
@@ -79,7 +79,7 @@ menuAdministrador = do
 
 segundoMenuAdministrador :: IO()
 segundoMenuAdministrador = do
-	putStrLn("Escolha o que você deseja fazer:\n")
+	putStrLn("\nEscolha o que você deseja fazer:")
 	putStrLn("1 - Cadastrar uma nova Perguntinha")
 	putStrLn("2 - Modificar ranking")
 	putStrLn("3 - Excluir minha conta")
@@ -105,7 +105,7 @@ segundaTelaOpcaoAdministrador x
 
 cadastraPergunta :: IO()
 cadastraPergunta = do
-	putStrLn("Insira sua Perguntinha:")
+	putStrLn("\nInsira sua Perguntinha:")
 	pergunta <- getLine
 	putStrLn("Insira a alternativa A da Perguntinha:")
 	alternativaA <- getLine
@@ -135,7 +135,7 @@ cadastraPergunta = do
 
 showRecordes :: IO()
 showRecordes = do
-	putStrLn("Abaixo estão os nicknames dos jogadores que conseguiram fazer atingiram o maior ápice durante uma partida de Perguntinhas")
+	putStrLn("\nAbaixo estão os nicknames dos jogadores que conseguiram fazer atingiram o maior ápice durante uma partida de Perguntinhas")
 	--recordes -- mostra os recordes. aqui vai precisar de uma opcao para retornar ao menu dentro dessa funcao. algo do tipo "pressione qualquer botao para retornar ao menu".
 
 -- Como só existe um adm, não achei necessário ter nome de usuário, apenas senha e tbm simplifica se for assim.
@@ -172,7 +172,7 @@ criaAdm = do
         senha <- getLine
         file <- openFile "admin.txt" WriteMode
         hPutStr file senha
-        putStrLn "Administrador criado com sucesso."
+        putStrLn "\nAdministrador criado com sucesso."
         hFlush file
         hClose file
         putStrLn ""

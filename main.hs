@@ -1,6 +1,20 @@
 import System.Exit (exitSuccess)
 import System.Directory
 import System.IO
+import Control.Exception
+import System.IO.Error hiding (catch)
+import Prelude hiding (catch)
+
+
+data Perguntinha = Perguntinha {
+    enunciadoQuestao :: String,
+    enunciadoAlternativaA :: String,
+    enunciadoAlternativaB :: String,
+    enunciadoAlternativaC :: String,
+    enunciadoAlternativaD :: String,
+    enunciadoDica :: String,
+    enunciadoAlternativaCorreta :: String} deriving (Read, Show)
+
 
 main :: IO()
 main = do
@@ -82,11 +96,42 @@ opcaoAdministrador x
 
 segundaTelaOpcaoAdministrador :: String -> IO()
 segundaTelaOpcaoAdministrador x
-	| x == "1" = print "cadastraPergunta" -- test
+	| x == "1" = cadastraPergunta -- test
 	| x == "2" = print "modificaRanking" -- test
 	| x == "3" = confirmMenu
 	| x == "4" = showMenu
 	| otherwise = invalidOption menuAdministrador
+
+
+cadastraPergunta :: IO()
+cadastraPergunta = do
+	putStrLn("Insira sua Perguntinha:")
+	pergunta <- getLine
+	putStrLn("Insira a alternativa A da Perguntinha:")
+	alternativaA <- getLine
+	putStrLn("Insira a alternativa B da Perguntinha:")
+	alternativaB <- getLine
+	putStrLn("Insira a alternativa C da Perguntinha:")
+	alternativaC <- getLine
+	putStrLn("Insira a alternativa D da Perguntinha:")
+	alternativaD <- getLine
+	putStrLn("Insira a dica da Perguntinha:")
+	dica <- getLine
+	putStrLn("Insira a alternativa correta da Perguntinha:")
+	alternativaCorreta <- getLine
+	
+	let perguntinha = Perguntinha pergunta alternativaA alternativaB alternativaC alternativaD dica alternativaCorreta
+	
+	perguntasCadastradas <- doesFileExist "perguntinhas.txt"
+    	if not perguntasCadastradas then do
+        	file <- openFile "perguntinhas.txt" WriteMode
+        	hPutStr file (show perguntinha)
+        	hFlush file
+        	hClose file
+        else do
+		appendFile "perguntinhas.txt" ("\n" ++ (show perguntinha))
+
+
 
 showRecordes :: IO()
 showRecordes = do
@@ -130,9 +175,13 @@ criaAdm = do
         putStrLn "Administrador criado com sucesso."
         hFlush file
         hClose file
+        putStrLn ""
+        showMenu
+
     else do
         putStrLn "Administrador já cadastrado, utilize sua senha para logar."
         loginAdm
+
 
 excluiAdm :: IO ()
 excluiAdm = do
@@ -142,10 +191,7 @@ excluiAdm = do
 	senhaCadastrada <- hGetContents file
 
 	if senha == senhaCadastrada then do
-		file <- openFile "admin.txt" WriteMode
-		hPutStr file ""
-		hFlush file
-		hClose file
+		removeFile "admin.txt"
 		putStrLn "Cadastro excluído com sucesso!"
 		showMenu
 	else do

@@ -217,3 +217,25 @@ invalidOption :: (IO()) -> IO()
 invalidOption f = do
 	putStrLn("Selecione uma alternativa válida")
 	f
+
+--metodo que recebe a pergunta selecionada aleatoriamente e a exibe na saída do programa para ser respondida
+exibeQuestao :: Perguntinha -> IO()
+exibeQuestao p = do
+	--mostra o enunciado da pergunta p com todas as alternativas a serem respondidas
+	alternativa <- getLine
+	recebeAlternativa questao alternativa
+
+calculaPontos :: Bool -> Bool -> Int -> Int
+calculaPontos verificacao dica tempo =
+	if verificacao then
+		if !dica then base
+		else then base - 5
+	else then
+		if !dica then base * -1
+		else then (base * -1) - 5
+	where
+		base = 20 + (tempo/2)
+
+verificaQuestao :: Perguntinha -> String -> Bool
+--se a string for igual ao gabarito da questao entao o metodo retorna true. caso contrario retorna false
+

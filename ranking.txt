@@ -6,3 +6,7 @@ jogador2 0
 a 2
 1234567890 56565
 test 1025
+jogador10 4848
+jogador5 100
+jogador 123
+jogador 123

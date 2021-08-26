@@ -4,6 +4,7 @@ import System.IO
 import Control.Exception
 import System.IO.Error hiding (catch)
 import Prelude hiding (catch)
+import Data.List
 
 
 data Perguntinha = Perguntinha {
@@ -18,147 +19,151 @@ data Perguntinha = Perguntinha {
 
 main :: IO()
 main = do
-    putStrLn $ "Boas vindas!"
-    putStrLn $ "Perguntinhas é um jogo de perguntas e respostas"
-    putStrLn $ "Selecione uma das opções abaixo:\n"
+    putStrLn "Boas vindas!"
+    putStrLn "Perguntinhas é um jogo de perguntas e respostas"
+    putStrLn "Selecione uma das opções abaixo:\n"
     showMenu
 
 showMenu :: IO()
 showMenu = do
-	putStrLn("1 - Sou jogador")
-	putStrLn("2 - Sou administrador")
-	putStrLn("3 - Ver recordes")
-	putStrLn("4 - Sobre o jogo")
-	putStrLn("5 - Sair\n")
+        putStrLn "1 - Sou jogador"
+        putStrLn "2 - Sou administrador"
+        putStrLn "3 - Ver recordes"
+        putStrLn "4 - Sobre o jogo"
+        putStrLn "5 - Sair\n"
 
-	opcao <- getLine
-	menus opcao
+        opcao <- getLine
+        menus opcao
 
 confirmMenu :: IO ()
 confirmMenu = do
-	putStrLn "Tem certeza que deseja excluir sua conta? Essa ação é irreversível."
-	putStrLn("1 - Não")
-	putStrLn("2 - Sim")
+        putStrLn "Tem certeza que deseja excluir sua conta? Essa ação é irreversível."
+        putStrLn "1 - Não"
+        putStrLn "2 - Sim"
 
-	opcao <- getLine
-	opcaoExcluiAdm opcao
+        opcao <- getLine
+        opcaoExcluiAdm opcao
 
 menus :: String -> IO()
 menus x
-	| x == "1" = menuJogador
-	| x == "2" = menuAdministrador
-	| x == "3" = showRecordes
-	| x == "4" = sobre
-	| x == "5" = exitSuccess
-	| otherwise = invalidOption showMenu
+        | x == "1" = menuJogador
+        | x == "2" = menuAdministrador
+        | x == "3" = mostraRanking
+        | x == "4" = sobre
+        | x == "5" = exitSuccess
+        | otherwise = invalidOption showMenu
 
 menuJogador :: IO()
 menuJogador = do
-	putStrLn("\nSelecione uma das opções abaixo:")
-	putStrLn("1 - Iniciar jogo")
-	putStrLn("2 - Retornar para o menu")
+        putStrLn "\nSelecione uma das opções abaixo:"
+        putStrLn "1 - Iniciar jogo"
+        putStrLn "2 - Retornar para o menu"
 
-	opcao <- getLine
-	opcaoJogador opcao
+        opcao <- getLine
+        opcaoJogador opcao
 
 opcaoJogador :: String -> IO()
 opcaoJogador x
 --	| x == "1" = jogo --ainda nao sei qual vai ser o nome dessa funcao entao da pra alterar depois
-	| x == "2" = showMenu
-	| otherwise = invalidOption menuJogador
+        | x == "2" = showMenu
+        | otherwise = invalidOption menuJogador
 
 menuAdministrador :: IO()
 menuAdministrador = do
-	putStrLn("\nSelecione uma das opções abaixo:")
-	putStrLn("1 - Já tenho cadastro (fazer login)")
-	putStrLn("2 - Não tenho cadastro (criar conta)")
-	putStrLn("3 - Retornar para o menu")
+        putStrLn "\nSelecione uma das opções abaixo:"
+        putStrLn "1 - Já tenho cadastro (fazer login)"
+        putStrLn "2 - Não tenho cadastro (criar conta)"
+        putStrLn "3 - Retornar para o menu"
 
-	opcao <- getLine
-	opcaoAdministrador opcao
+        opcao <- getLine
+        opcaoAdministrador opcao
 
 segundoMenuAdministrador :: IO()
 segundoMenuAdministrador = do
-	putStrLn("\nEscolha o que você deseja fazer:")
-	putStrLn("1 - Cadastrar uma nova Perguntinha")
-	putStrLn("2 - Modificar ranking")
-	putStrLn("3 - Excluir minha conta")
-	putStrLn("4 - Retornar para o menu")
-	opcao <- getLine
-	segundaTelaOpcaoAdministrador opcao
+        putStrLn "\nEscolha o que você deseja fazer:"
+        putStrLn "1 - Cadastrar uma nova Perguntinha"
+        putStrLn "2 - Modificar ranking"
+        putStrLn "3 - Excluir minha conta"
+        putStrLn "4 - Retornar para o menu"
+        opcao <- getLine
+        segundaTelaOpcaoAdministrador opcao
 
 opcaoAdministrador :: String -> IO()
 opcaoAdministrador x
-	| x == "1" = loginAdm
-	| x == "2" = criaAdm
-	| x == "3" = showMenu
-	| otherwise = invalidOption menuAdministrador
+        | x == "1" = loginAdm
+        | x == "2" = criaAdm
+        | x == "3" = showMenu
+        | otherwise = invalidOption menuAdministrador
 
 segundaTelaOpcaoAdministrador :: String -> IO()
 segundaTelaOpcaoAdministrador x
-	| x == "1" = cadastraPergunta -- test
-	| x == "2" = print "modificaRanking" -- test
-	| x == "3" = confirmMenu
-	| x == "4" = showMenu
-	| otherwise = invalidOption menuAdministrador
+        | x == "1" = cadastraPergunta
+        | x == "2" = telaModificaRanking
+        | x == "3" = confirmMenu
+        | x == "4" = showMenu
+        | otherwise = invalidOption menuAdministrador
 
+telaModificaRanking :: IO()
+telaModificaRanking = do
+        putStrLn "\nEscolha o que você deseja fazer:"
+        putStrLn "1 - Excluir jogador do ranking"
+        putStrLn "2 - Excluir ranking"
+        putStrLn "3 - Retornar para o menu"
+        opcao <- getLine
+        menuModificaRanking opcao
+
+menuModificaRanking :: String -> IO()
+menuModificaRanking x
+        | x == "1" = excluiJogadorRanking
+        | x == "2" = excluiRanking
+        | x == "3" = segundoMenuAdministrador
+        | otherwise = invalidOption telaModificaRanking
 
 cadastraPergunta :: IO()
 cadastraPergunta = do
-	putStrLn("\nInsira sua Perguntinha:")
-	pergunta <- getLine
-	putStrLn("Insira a alternativa A da Perguntinha:")
-	alternativaA <- getLine
-	putStrLn("Insira a alternativa B da Perguntinha:")
-	alternativaB <- getLine
-	putStrLn("Insira a alternativa C da Perguntinha:")
-	alternativaC <- getLine
-	putStrLn("Insira a alternativa D da Perguntinha:")
-	alternativaD <- getLine
-	putStrLn("Insira a dica da Perguntinha:")
-	dica <- getLine
-	putStrLn("Insira a alternativa correta da Perguntinha:")
-	alternativaCorreta <- getLine
-	
-	let perguntinha = Perguntinha pergunta alternativaA alternativaB alternativaC alternativaD dica alternativaCorreta
-	
-	perguntasCadastradas <- doesFileExist "perguntinhas.txt"
-    	if not perguntasCadastradas then do
-        	file <- openFile "perguntinhas.txt" WriteMode
-        	hPutStr file (show perguntinha)
-        	hFlush file
-        	hClose file
-        else do
-		appendFile "perguntinhas.txt" ("\n" ++ (show perguntinha))
+        putStrLn "\nInsira sua Perguntinha:"
+        pergunta <- getLine
+        putStrLn "Insira a alternativa A da Perguntinha:"
+        alternativaA <- getLine
+        putStrLn "Insira a alternativa B da Perguntinha:"
+        alternativaB <- getLine
+        putStrLn "Insira a alternativa C da Perguntinha:"
+        alternativaC <- getLine
+        putStrLn "Insira a alternativa D da Perguntinha:"
+        alternativaD <- getLine
+        putStrLn "Insira a dica da Perguntinha:"
+        dica <- getLine
+        putStrLn "Insira a alternativa correta da Perguntinha:"
+        alternativaCorreta <- getLine
 
+        let perguntinha = Perguntinha pergunta alternativaA alternativaB alternativaC alternativaD dica alternativaCorreta
 
+        perguntasCadastradas <- doesFileExist "perguntinhas.txt"
+        if not perguntasCadastradas then do
+                file <- openFile "perguntinhas.txt" WriteMode
+                hPutStr file (show perguntinha)
+                hFlush file
+                hClose file
+        else appendFile "perguntinhas.txt" ("\n" ++ show perguntinha)
 
-showRecordes :: IO()
-showRecordes = do
-	putStrLn("\nAbaixo estão os nicknames dos jogadores que conseguiram fazer atingiram o maior ápice durante uma partida de Perguntinhas")
-	--recordes -- mostra os recordes. aqui vai precisar de uma opcao para retornar ao menu dentro dessa funcao. algo do tipo "pressione qualquer botao para retornar ao menu".
-
--- Como só existe um adm, não achei necessário ter nome de usuário, apenas senha e tbm simplifica se for assim.
--- Não sei se eh a melhor forma de fazer, mas pelo que testei, funciona kkk.
--- Acho que pode ter uma opção de resetar ou modificar a senha. 
 loginAdm :: IO()
 loginAdm = do
     adminCadastrado <- doesFileExist "admin.txt"
-    
+
     if adminCadastrado then do
         putStr "Insira sua senha: "
         senha <- getLine
         file <- openFile "admin.txt" ReadMode
         senhaCadastrada <- hGetContents file
-        
+
         if senha == senhaCadastrada then do
-			putStrLn "Login realizado com sucesso."
-			segundoMenuAdministrador
+                        putStrLn "Login realizado com sucesso."
+                        segundoMenuAdministrador
         else do
-			putStrLn "Senha incorreta, tente novamente.\n"
-			menuAdministrador
+                        putStrLn "Senha incorreta, tente novamente.\n"
+                        menuAdministrador
         hClose file
-    
+
     else do
         putStrLn "Senha não cadastrada. Por favor, cadastre uma senha."
         criaAdm
@@ -185,43 +190,140 @@ criaAdm = do
 
 excluiAdm :: IO ()
 excluiAdm = do
-	putStrLn "Insira sua senha: "
-	senha <- getLine
-	file <- openFile "admin.txt" ReadMode
-	senhaCadastrada <- hGetContents file
+        putStrLn "Insira sua senha: "
+        senha <- getLine
+        file <- openFile "admin.txt" ReadMode
+        senhaCadastrada <- hGetContents file
 
-	if senha == senhaCadastrada then do
-		removeFile "admin.txt"
-		putStrLn "Cadastro excluído com sucesso!"
-		showMenu
-	else do
-		putStrLn "Senha incorreta. Tente novamente."
-		excluiAdm
-     	
+        if senha == senhaCadastrada then do
+                removeFile "admin.txt"
+                putStrLn "Cadastro excluído com sucesso!"
+                showMenu
+        else do
+                putStrLn "Senha incorreta. Tente novamente."
+                excluiAdm
+
 
 opcaoExcluiAdm :: String -> IO ()
 opcaoExcluiAdm x
-	| x == "1" = segundoMenuAdministrador
-	| x == "2" = excluiAdm
-	| otherwise = invalidOption segundoMenuAdministrador
+        | x == "1" = segundoMenuAdministrador
+        | x == "2" = excluiAdm
+        | otherwise = invalidOption segundoMenuAdministrador
 
+cadastraNoRanking :: (String, Int) -> IO()
+cadastraNoRanking tupla = do
+        rankingExiste <- doesFileExist "ranking.txt"
+        if not rankingExiste then do
+                file <- openFile "ranking.txt" WriteMode
+                hPutStr file (formataTuplaArquivo tupla ++ "\n")
+                hFlush file
+                hClose file
+        else appendFile "ranking.txt" (formataTuplaArquivo tupla ++ "\n")
+
+voltaTelaEnter :: IO b -> IO b
+voltaTelaEnter f = do
+        putStrLn "Pressione enter para voltar ao menu anterior"
+        x <- getLine
+        f
+
+mostraRanking :: IO ()
+mostraRanking = do
+        ranking <- readFile' "ranking.txt"
+        if not (ehVazio ranking) then do
+                let rankingEmTupla = map (converteEmTupla . words) (lines ranking)
+                let rankingOrdenado = ordenaDecrescente rankingEmTupla
+                putStrLn (formataRanking rankingOrdenado)
+        else do
+                putStrLn "Não temos registro de nenhuma pontuação de jogador. Que tal iniciar uma partida?"
+        voltaTelaEnter showMenu
+
+formataRanking :: [(String, Int)] -> String
+formataRanking ranking = "\nAbaixo estão os nicknames dos jogadores que conseguiram fazer atingiram o maior ápice durante uma partida de Perguntinhas\n" ++
+                                                 "Jogador    | Pontuação\n" ++
+                         "-----------------------\n" ++
+                         unlines (map formataTupla ranking)
+
+converteEmTupla :: [String] -> (String, Int)
+converteEmTupla [x, y] = (x, read y)
+
+ordenaDecrescente :: [(a, Int)] -> [(a, Int)]
+ordenaDecrescente = sortOn (\(_,y) -> negate y)
+
+-- Transforma tupla em nomeJogador | pontuação, para exibição no ranking
+formataTupla :: (String, Int) -> String
+formataTupla (x, y) = x ++ concat(adicionaEspaco(length x)) ++ " | " ++ show y
+
+-- 
+adicionaEspaco :: Int -> [String]
+adicionaEspaco x
+        | x < 10 = replicate (10 - x) " "
+        | otherwise = []
+
+-- Transforma tupla em nomeJogador pontuação, para adição no aquivo do ranking
+formataTuplaArquivo :: (String, Int) -> String
+formataTuplaArquivo (x, y) = x ++ " " ++ show y
+
+readicionaNoArquivo :: [(String, Int)] -> IO ()
+readicionaNoArquivo ranking = do
+        file <- openFile "ranking.txt" WriteMode
+        hPutStr file (unlines (map formataTuplaArquivo ranking))
+        hFlush file
+        hClose file
+
+ehVazio :: String -> Bool
+ehVazio x = x == ""
+
+excluiJogadorRanking :: IO ()
+excluiJogadorRanking = do
+
+        ranking <- readFile' "ranking.txt"
+        if not (ehVazio ranking) then do
+                putStrLn "Qual o nome do jogador que você deseja excluir do ranking?"
+                nome <- getLine
+
+                let rankingCompletoEmTupla = map (converteEmTupla . words) (lines ranking)
+                let rankingFiltrado = filter ((/=nome).fst) rankingCompletoEmTupla
+
+                if rankingCompletoEmTupla == rankingFiltrado then do
+                        putStrLn "Não existe jogador no ranking com este nome de usúario. Tente novamente"
+                        telaModificaRanking
+                else do
+                        readicionaNoArquivo rankingFiltrado
+                        putStrLn "Jogador removido com sucesso."
+        else
+                putStrLn "Não é possível excluir jogador do ranking, não temos nenhuma pontuação registrada"
+        voltaTelaEnter telaModificaRanking
+
+excluiRanking :: IO ()
+excluiRanking = do
+        ranking <- readFile' "ranking.txt"
+        if ehVazio ranking then do
+               putStrLn "Não foi possível excluir ranking, não temos nenhuma pontuação registrada."
+               telaModificaRanking
+        else do
+                file <- openFile "ranking.txt" WriteMode
+                hPutStr file ""
+                hFlush file
+                hClose file
+                putStrLn "Ranking excluído com sucesso."
+        voltaTelaEnter telaModificaRanking
 
 sobre :: IO()
 sobre = do
-	let file = "sobre.txt"
-	doc <- readFile file
-	putStrLn doc
-	showMenu
+        let file = "sobre.txt"
+        doc <- readFile file
+        putStrLn doc
+        showMenu
 
-invalidOption :: (IO()) -> IO()
+invalidOption :: IO() -> IO()
 invalidOption f = do
-	putStrLn("Selecione uma alternativa válida")
-	f
+        putStrLn "Selecione uma alternativa válida"
+        f
 
 --metodo que recebe a pergunta selecionada aleatoriamente e a exibe na saída do programa para ser respondida
 exibeQuestao :: Perguntinha -> IO()
 exibeQuestao p = do
-	--mostra o enunciado da pergunta p com todas as alternativas a serem respondidas
+        --mostra o enunciado da pergunta p com todas as alternativas a serem respondidas
 	alternativa <- getLine
 	recebeAlternativa questao alternativa
 
@@ -238,4 +340,3 @@ calculaPontos verificacao dica tempo =
 
 verificaQuestao :: Perguntinha -> String -> Bool
 --se a string for igual ao gabarito da questao entao o metodo retorna true. caso contrario retorna false
-

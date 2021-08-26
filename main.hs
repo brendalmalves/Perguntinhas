@@ -210,7 +210,6 @@ opcaoExcluiAdm x
         | x == "2" = excluiAdm
         | otherwise = invalidOption segundoMenuAdministrador
 
-
 cadastraNoRanking :: (String, Int) -> IO()
 cadastraNoRanking tupla = do
         rankingExiste <- doesFileExist "ranking.txt"
@@ -232,14 +231,14 @@ mostraRanking = do
         ranking <- readFile' "ranking.txt"
         if not (ehVazio ranking) then do
                 let rankingEmTupla = map (converteEmTupla . words) (lines ranking)
-                let rankingOrdenado = ordenaDecrescenteEPega10Maiores rankingEmTupla
+                let rankingOrdenado = ordenaDecrescente rankingEmTupla
                 putStrLn (formataRanking rankingOrdenado)
         else do
                 putStrLn "Não temos registro de nenhuma pontuação de jogador. Que tal iniciar uma partida?"
         voltaTelaEnter showMenu
 
 formataRanking :: [(String, Int)] -> String
-formataRanking ranking = "\nAbaixo estão os nicknames dos jogadores que atingiram o maior ápice durante uma partida de Perguntinhas\n" ++
+formataRanking ranking = "\nAbaixo estão os nicknames dos jogadores que conseguiram fazer atingiram o maior ápice durante uma partida de Perguntinhas\n" ++
                                                  "Jogador    | Pontuação\n" ++
                          "-----------------------\n" ++
                          unlines (map formataTupla ranking)
@@ -247,8 +246,8 @@ formataRanking ranking = "\nAbaixo estão os nicknames dos jogadores que atingir
 converteEmTupla :: [String] -> (String, Int)
 converteEmTupla [x, y] = (x, read y)
 
-ordenaDecrescenteEPega10Maiores :: [(a, Int)] -> [(a, Int)]
-ordenaDecrescenteEPega10Maiores = take 10 . sortOn (\(_,y) -> negate y)
+ordenaDecrescente :: [(a, Int)] -> [(a, Int)]
+ordenaDecrescente = sortOn (\(_,y) -> negate y)
 
 -- Transforma tupla em nomeJogador | pontuação, para exibição no ranking
 formataTupla :: (String, Int) -> String

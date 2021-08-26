@@ -319,3 +319,37 @@ invalidOption :: IO() -> IO()
 invalidOption f = do
         putStrLn "Selecione uma alternativa válida"
         f
+
+--esboço/pseudocodigo do metodo de jogo
+--recebe como primeiro parametro uma lista dos enunciados (identificador unico de cada questao) das questoes que ja foram selecionadas aleatoriamente
+--recebe como segundo parametro uma lista de inteiros correspondente as pontuacoes do jogador numa partida
+jogo :: [String] -> [Int] -> IO()
+jogo questoes pontos
+		| length questoes == quantidade de questoes cadastradas =
+			-- encerra o jogo e salva nome e apice de pontuacao do jogador no ranking
+		| otherwise = do
+			-- randomQuestao eh o metodo que escolhe aleatoriamente uma questao para ser respondida
+			-- a eh o parametro do metodo. certamente deve ser o arquivo em que as questoes estao salvas
+			let questao = randomQuestao a
+			exibeQuestao questao
+			let tempoPergunta = getCurrentTime
+			resposta <- getLine
+			if resposta == "d" then do
+				showDica questao
+				actualResposta <- getLine
+				let tempoResposta = getCurrentTime
+				let diferencaTempo = nominalDiffTimeToSeconds (diffUTCTime tempoResposta tempoPergunta)
+				pontos ++ [calculaPontos questao True diferencaTempo (last pontos)]
+			else if resposta == "e" then do
+				--encerra o jogo salva o apice de pontuacao e o nome do jogador no ranking
+			else if ehValida resposta then
+				pontos ++ [calculaPontos questao False diferencaTempo (last pontos)]
+			else pontos ++ [(last pontos) - 20]
+			--chamada recursiva:
+			jogo (questoes ++ [questao]) pontos
+
+ehValida :: Char -> Bool
+ehValida resp =
+	if resp == 'a' || resp == 'b' || resp == 'c' || resp == 'd'
+		then True
+	else False

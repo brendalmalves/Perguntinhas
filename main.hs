@@ -217,3 +217,4 @@ invalidOption :: (IO()) -> IO()
 invalidOption f = do
 	putStrLn("Selecione uma alternativa válida")
 	f
+

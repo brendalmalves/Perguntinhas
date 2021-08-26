@@ -1,0 +1,8 @@
+jogador2 45545
+jogador2 0
+jogador3 2226
+jogador4 8855
+jogador2 0
+a 2
+1234567890 56565
+test 1025

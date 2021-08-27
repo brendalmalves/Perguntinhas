@@ -325,7 +325,7 @@ invalidOption f = do
 --recebe como segundo parametro uma lista de inteiros correspondente as pontuacoes do jogador numa partida
 jogo :: [String] -> [Int] -> IO()
 jogo questoes pontos
-                | last questoes < 0 = 
+                | (last pontos) < 0 = 
                         --encerra participacao do jogador. salva seu apice e nome no ranking.
 		| length questoes == quantidade de questoes cadastradas =
 			-- encerra o jogo e salva nome e apice de pontuacao do jogador no ranking

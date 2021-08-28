@@ -5,6 +5,8 @@ import Control.Exception
 import System.IO.Error hiding (catch)
 import Prelude hiding (catch)
 import Data.List
+import Control.Applicative
+import Data.List.Split
 
 
 data Perguntinha = Perguntinha {
@@ -323,35 +325,49 @@ invalidOption f = do
 --esboço/pseudocodigo do metodo de jogo
 --recebe como primeiro parametro uma lista dos enunciados (identificador unico de cada questao) das questoes que ja foram selecionadas aleatoriamente
 --recebe como segundo parametro uma lista de inteiros correspondente as pontuacoes do jogador numa partida
-jogo :: [String] -> [Int] -> IO()
-jogo questoes pontos
-                | (last pontos) < 0 = 
-                        --encerra participacao do jogador. salva seu apice e nome no ranking.
-		| length questoes == quantidade de questoes cadastradas =
-			-- encerra o jogo e salva nome e apice de pontuacao do jogador no ranking
+jogo :: String -> [String] -> [Int] -> IO()
+jogo nome questoes pontos
+                | (last pontos) < 0 = do
+                        putStrLn $ "Sua pontuação foi menor que zero. Sua partida será encerrada, mas seu nome e seu ápice serão guardados no ranking."
+                        cadastraNoRanking (nome, (getApex pontos))
+                        showMenu
 		| otherwise = do
 			-- randomQuestao eh o metodo que escolhe aleatoriamente uma questao para ser respondida
 			-- a eh o parametro do metodo. certamente deve ser o arquivo em que as questoes estao salvas
-			let questao = randomQuestao a
-			exibeQuestao questao
-			let tempoPergunta = getCurrentTime
-			resposta <- getLine
-			if resposta == "d" then do
-				showDica questao
-				actualResposta <- getLine
-				let tempoResposta = getCurrentTime
-				let diferencaTempo = nominalDiffTimeToSeconds (diffUTCTime tempoResposta tempoPergunta)
-				pontos ++ [calculaPontos questao True diferencaTempo (last pontos)]
-			else if resposta == "e" then do
-				--encerra o jogo salva o apice de pontuacao e o nome do jogador no ranking
-			else if ehValida resposta then
-				pontos ++ [calculaPontos questao False diferencaTempo (last pontos)]
-			else pontos ++ [(last pontos) - 20]
-			--chamada recursiva:
-			jogo (questoes ++ [questao]) pontos
+                        existePerguntas <- doesFileExist "perguntinhas.txt"
+                        if not existePerguntas then do
+                                putStrLn $ "Ainda não há questões cadastradas no sistema."
+                                menu
+                        else do
+                                perguntas <- readFile "perguntinhas.txt"
+                                quantidadePerguntas = length (lines perguntas)
+                                if quantidadePerguntas == (length questoes) then do
+                                        putStrLn "Todas as perguntas já foram respondidas. Seu nome e ápice serão guardados no ranking e o jogo será encerrado."
+                                        cadastraNoRanking (nome, (getApex pontos))
+                                        showMenu
+        			let questao = randomQuestao a -- QUANDO A QUESTAO FOR SORTEADA É NECESSÁRIO VER SE ELA JÁ NÃO FOI RESPONDIDA ANTERIORMENTE PELO JOGADOR. VER SE ELA É ELEMENTO DA LISTA "questoes"
+        			exibeQuestao questao
+        			let tempoPergunta = getCurrentTime
+        			resposta <- getLine
+        			if resposta == "d" then do
+        				showDica questao
+        				actualResposta <- getLine
+        				let tempoResposta = getCurrentTime
+        				let diferencaTempo = nominalDiffTimeToSeconds (diffUTCTime tempoResposta tempoPergunta)
+        				pontos ++ [calculaPontos questao True diferencaTempo (last pontos)]
+        			else if resposta == "e" then do
+        				--encerra o jogo salva o apice de pontuacao e o nome do jogador no ranking
+        			else if ehValida resposta then
+        				pontos ++ [calculaPontos questao False diferencaTempo (last pontos)]
+        			else pontos ++ [(last pontos) - 20]
+        			--chamada recursiva:
+        			jogo nome (questoes ++ [questao]) pontos
 
 ehValida :: Char -> Bool
 ehValida resp =
 	if resp == 'a' || resp == 'b' || resp == 'c' || resp == 'd'
 		then True
 	else False
+
+getApex :: [Int] -> Int
+getApex lista = maximum lista

@@ -151,10 +151,6 @@ cadastraPergunta = do
                 hClose file
         else appendFile "perguntinhas.txt" ("\n" ++ show perguntinha)
 
-insereGabarito :: IO()
-insereGabarito = do
-        
-
 loginAdm :: IO()
 loginAdm = do
     adminCadastrado <- doesFileExist "admin.txt"

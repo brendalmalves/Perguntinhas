@@ -7,7 +7,8 @@ import Prelude hiding (catch)
 import Data.List
 import Control.Applicative
 import Data.List.Split
-
+import System.Random
+import Data.Time.Clock
 
 data Perguntinha = Perguntinha {
     enunciadoQuestao :: String,
@@ -322,10 +323,11 @@ invalidOption f = do
         putStrLn "Selecione uma alternativa válida"
         f
 
+
 --esboço/pseudocodigo do metodo de jogo
---recebe como primeiro parametro uma lista dos enunciados (identificador unico de cada questao) das questoes que ja foram selecionadas aleatoriamente
+--recebe como primeiro parametro uma lista de Perguntinha das questoes que ja foram selecionadas anteriormente
 --recebe como segundo parametro uma lista de inteiros correspondente as pontuacoes do jogador numa partida
-jogo :: String -> [String] -> [Int] -> IO()
+jogo :: String -> [Perguntinha] -> [Int] -> IO()
 jogo nome questoes pontos
                 | (last pontos) < 0 = do
                         putStrLn $ "Sua pontuação foi menor que zero. Sua partida será encerrada, mas seu nome e seu ápice serão guardados no ranking."
@@ -345,18 +347,26 @@ jogo nome questoes pontos
                                         putStrLn "Todas as perguntas já foram respondidas. Seu nome e ápice serão guardados no ranking e o jogo será encerrado."
                                         cadastraNoRanking (nome, (getApex pontos))
                                         showMenu
-        			let questao = randomQuestao a -- QUANDO A QUESTAO FOR SORTEADA É NECESSÁRIO VER SE ELA JÁ NÃO FOI RESPONDIDA ANTERIORMENTE PELO JOGADOR. VER SE ELA É ELEMENTO DA LISTA "questoes"
-        			exibeQuestao questao
-        			let tempoPergunta = getCurrentTime
+                                geradorAleatorio <- newStdGen
+                                let numeroDaLinha = randomR (1, quantidadePerguntas) geradorAleatorio
+        			let questao = getQuestao numeroDaLinha -- getQuestao recebe um inteiro correspondente à linha em que a pergunta esta armazenada em perguntinhas.txt e retorna um Perguntinha
+        			if questao elem questoes then
+                                        jogo nome questoes pontos
+                                exibeQuestao questao -- recebe um Perguntinha como parâmetro e exibe a pergunta, as alternativas e outras duas alternativas extras: alternativa 'e)', que exibe uma dica e alternativa 'f)' que encerra o jogo
+        			tempoPergunta <- getCurrentTime
+                                let timePergunta = floor $ utctDayTime tempoPergunta :: Int
         			resposta <- getLine
-        			if resposta == "d" then do
+        			if resposta == "e" then do
         				showDica questao
         				actualResposta <- getLine
-        				let tempoResposta = getCurrentTime
-        				let diferencaTempo = nominalDiffTimeToSeconds (diffUTCTime tempoResposta tempoPergunta)
+                                        tempoResposta <- getCurrentTime
+                                        let timeResposta = floor $ utctDayTime tempoResposta :: Int
+        				let diferencaTempo = timeResposta - timePergunta
         				pontos ++ [calculaPontos questao True diferencaTempo (last pontos)]
-        			else if resposta == "e" then do
-        				--encerra o jogo salva o apice de pontuacao e o nome do jogador no ranking
+        			else if resposta == "f" then do
+        				putStrLn "Você escolheu encerrar sua partida. Seu nome e ápice serão guardados no ranking e você retornará para o menu."
+                                        cadastraNoRanking (nome, (getApex pontos))
+                                        showMenu
         			else if ehValida resposta then
         				pontos ++ [calculaPontos questao False diferencaTempo (last pontos)]
         			else pontos ++ [(last pontos) - 20]

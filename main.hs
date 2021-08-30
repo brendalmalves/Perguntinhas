@@ -127,29 +127,37 @@ cadastraPergunta :: IO()
 cadastraPergunta = do
         putStrLn "\nInsira sua Perguntinha:"
         pergunta <- getLine
-        putStrLn "Insira a alternativa A da Perguntinha:"
+        putStrLn "\nInsira a alternativa A da Perguntinha:"
         alternativaA <- getLine
-        putStrLn "Insira a alternativa B da Perguntinha:"
+        putStrLn "\nInsira a alternativa B da Perguntinha:"
         alternativaB <- getLine
-        putStrLn "Insira a alternativa C da Perguntinha:"
+        putStrLn "\nInsira a alternativa C da Perguntinha:"
         alternativaC <- getLine
-        putStrLn "Insira a alternativa D da Perguntinha:"
+        putStrLn "\nInsira a alternativa D da Perguntinha:"
         alternativaD <- getLine
-        putStrLn "Insira a dica da Perguntinha:"
+        putStrLn "\nInsira a dica da Perguntinha:"
         dica <- getLine
         putStrLn "Insira a alternativa correta da Perguntinha. Digite um caractere de 'a' a 'd', apenas o caractere:"
-        alternativaCorreta <- getLine --seria bom ter um loop (recusao) ate o usuario digitar uma alternativa valida
+        alternativaCorreta <- getLine --seria bom ter um loop (recursao) ate o usuario digitar uma alternativa valida
         let lowerAlt = map toLower alternativaCorreta
+        cadastraPerguntaGabarito pergunta alternativaA alternativaB alternativaC alternativaD dica lowerAlt
 
-        let perguntinha = Perguntinha pergunta alternativaA alternativaB alternativaC alternativaD dica lowerAlt
-
-        perguntasCadastradas <- doesFileExist "perguntinhas.txt"
-        if not perguntasCadastradas then do
-                file <- openFile "perguntinhas.txt" WriteMode
-                hPutStr file (show perguntinha)
-                hFlush file
-                hClose file
-        else appendFile "perguntinhas.txt" ("\n" ++ show perguntinha)
+cadastraPerguntaGabarito :: String -> String -> String -> String -> String -> String -> String -> IO()
+cadastraPerguntaGabarito pergunta alternativaA alternativaB alternativaC alternativaD dica gabarito = do
+        if ehValida gabarito then do
+                let perguntinha = Perguntinha pergunta alternativaA alternativaB alternativaC alternativaD dica gabarito
+                perguntasCadastradas <- doesFileExist "perguntinhas.txt"
+                if not perguntasCadastradas then do
+                        file <- openFile "perguntinhas.txt" WriteMode
+                        hPutStr file (show perguntinha)
+                        hFlush file
+                        hClose file
+                else appendFile "perguntinhas.txt" ("\n" ++ show perguntinha)
+        else do
+                putStrLn "\nVocê não inseriu um gabarito válido para sua Perguntinha. Por favor, digite novamente um caractere válido de 'a' a 'd':"
+                alternativaCorreta <- getLine
+                let lowerAlt = map toLower alternativaCorreta
+                cadastraPerguntaGabarito pergunta alternativaA alternativaB alternativaC alternativaD dica lowerAlt
 
 loginAdm :: IO()
 loginAdm = do
@@ -325,7 +333,7 @@ invalidOption f = do
         putStrLn "Selecione uma alternativa válida"
         f
 
-{-
+
 --esboço/pseudocodigo do metodo de jogo
 --recebe como primeiro parametro uma lista de Perguntinha das questoes que ja foram selecionadas anteriormente
 --recebe como segundo parametro uma lista de inteiros correspondente as pontuacoes do jogador numa partida
@@ -333,11 +341,12 @@ jogo :: String -> [Perguntinha] -> [Int] -> IO()
 jogo nome questoes pontos
                 | (last pontos) < 0 = do
                         putStrLn $ "Sua pontuação foi menor que zero. Sua partida será encerrada, mas seu nome e seu ápice serão guardados no ranking."
+                        putStrLn $ nome ++ ", " ++ "seu ápice foi:" ++ (show getApex (pontos))
                         cadastraNoRanking (nome, (getApex pontos))
                         showMenu
                 | otherwise = do
-                        -- randomQuestao eh o metodo que escolhe aleatoriamente uma questao para ser respondida
-                        -- a eh o parametro do metodo. certamente deve ser o arquivo em que as questoes estao salvas
+                        -- randomQuestao eh o metodo que escolhe aleatoriamente uma questao para ser respondida. retorna Perguntinha.
+                        -- "a" eh o parametro do metodo. certamente deve ser o arquivo em que as questoes estao salvas
                         existePerguntas <- doesFileExist "perguntinhas.txt"
                         if not existePerguntas then do
                                 putStrLn $ "Ainda não há questões cadastradas no sistema."
@@ -347,40 +356,42 @@ jogo nome questoes pontos
                                 let quantidadePerguntas = length (lines perguntas)
                                 if quantidadePerguntas == (length questoes) then do
                                         putStrLn "Todas as perguntas já foram respondidas. Seu nome e ápice serão guardados no ranking e o jogo será encerrado."
+                                        putStrLn $ nome ++ ", " ++ "seu ápice foi:" ++ (show getApex (pontos))
                                         cadastraNoRanking (nome, (getApex pontos))
                                         showMenu
-                                geradorAleatorio <- newStdGen
-                                let numeroDaLinha = randomR (1, quantidadePerguntas) geradorAleatorio
-                                let questao = getQuestao numeroDaLinha -- getQuestao recebe um inteiro correspondente à linha em que a pergunta esta armazenada em perguntinhas.txt e retorna um Perguntinha
-                                if questao elem questoes then
-                                        jogo nome questoes pontos
-                                exibeQuestao questao -- recebe um Perguntinha como parâmetro e exibe a pergunta, as alternativas e outras duas alternativas extras: alternativa 'e)', que exibe uma dica e alternativa 'f)' que encerra o jogo
-                                tempoPergunta <- getCurrentTime
-                                let timePergunta = floor $ utctDayTime tempoPergunta :: Int
-                                resposta <- getLine
-                                if resposta == "e" then do
-                                        showDica questao
-                                        actualResposta <- getLine
-                                        tempoResposta <- getCurrentTime
-                                        let timeResposta = floor $ utctDayTime tempoResposta :: Int
-                                        let diferencaTempo = timeResposta - timePergunta
-                                        pontos ++ [calculaPontos questao True diferencaTempo (last pontos)]
-                                else if resposta == "f" then do
-                                        putStrLn "Você escolheu encerrar sua partida. Seu nome e ápice serão guardados no ranking e você retornará para o menu."
-                                        cadastraNoRanking (nome, (getApex pontos))
-                                        showMenu
-                                else if ehValida resposta then
-                                        pontos ++ [calculaPontos questao False diferencaTempo (last pontos)]
-                                else pontos ++ [(last pontos) - 20]
-                                --chamada recursiva:
-                                jogo nome (questoes ++ [questao]) pontos
+                                else do
+                                        geradorAleatorio <- newStdGen
+                                        let numeroDaLinha = randomR (1, quantidadePerguntas) geradorAleatorio
+                                        let questao = getQuestao numeroDaLinha -- getQuestao recebe um inteiro correspondente à linha em que a pergunta esta armazenada em perguntinhas.txt e retorna um Perguntinha
+                                        if questao elem questoes then
+                                                jogo nome questoes pontos
+                                        exibeQuestao questao -- recebe um Perguntinha como parâmetro e exibe a pergunta, as alternativas e outras duas alternativas extras: alternativa 'e)', que exibe uma dica e alternativa 'f)' que encerra o jogo
+                                        tempoPergunta <- getCurrentTime
+                                        let timePergunta = floor $ utctDayTime tempoPergunta :: Int
+                                        resposta <- getLine
+                                        if resposta == "e" then do
+                                                showDica questao
+                                                actualResposta <- getLine
+                                                tempoResposta <- getCurrentTime
+                                                let timeResposta = floor $ utctDayTime tempoResposta :: Int
+                                                let diferencaTempo = timeResposta - timePergunta
+                                                pontos ++ [calculaPontos questao True diferencaTempo (last pontos)]
+                                        else if resposta == "f" then do
+                                                putStrLn "Você escolheu encerrar sua partida. Seu nome e ápice serão guardados no ranking e você retornará para o menu."
+                                                cadastraNoRanking (nome, (getApex pontos))
+                                                showMenu
+                                        else if ehValida resposta then
+                                                pontos ++ [calculaPontos questao False diferencaTempo (last pontos)]
+                                        else pontos ++ [(last pontos) - 20]
+                                        --chamada recursiva:
+                                        jogo nome (questoes ++ [questao]) pontos
 
-ehValida :: Char -> Bool
+
+ehValida :: String -> Bool
 ehValida resp =
-        if resp == 'a' || resp == 'b' || resp == 'c' || resp == 'd'
+        if resp == "a" || resp == "b" || resp == "c" || resp == "d"
                 then True
         else False
 
 getApex :: [Int] -> Int
 getApex lista = maximum lista
--}

@@ -378,9 +378,13 @@ jogo nome questoes pontos
                                                 pontos ++ [calculaPontos questao True diferencaTempo (last pontos)]
                                         else if resposta == "f" then do
                                                 putStrLn "Você escolheu encerrar sua partida. Seu nome e ápice serão guardados no ranking e você retornará para o menu."
+                                                putStrLn $ nome ++ ", " ++ "seu ápice foi:" ++ (show getApex (pontos))
                                                 cadastraNoRanking (nome, (getApex pontos))
                                                 showMenu
                                         else if ehValida resposta then
+                                                tempoResposta <- getCurrentTime
+                                                let timeResposta = floor $ utctDayTime tempoResposta :: Int
+                                                let diferencaTempo = timeResposta - timePergunta
                                                 pontos ++ [calculaPontos questao False diferencaTempo (last pontos)]
                                         else pontos ++ [(last pontos) - 20]
                                         --chamada recursiva:

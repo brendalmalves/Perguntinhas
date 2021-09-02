@@ -18,7 +18,7 @@ data Perguntinha = Perguntinha {
     enunciadoAlternativaC :: String,
     enunciadoAlternativaD :: String,
     enunciadoDica :: String,
-    enunciadoAlternativaCorreta :: String} deriving (Read, Show)
+    enunciadoAlternativaCorreta :: String} deriving (Read, Show, Eq)
 
 
 main :: IO()
@@ -449,7 +449,7 @@ jogo nome questoes pontos
 		                                        tempoResposta <- getCurrentTime
 		                                        let timeResposta = floor $ utctDayTime tempoResposta :: Int
 		                                        let diferencaTempo = timeResposta - timePergunta
-		                                        pontos ++ (calculaPontos questao actualResposta True diferencaTempo (last pontos))
+		                                        let pontos = pontos ++ [calculaPontos questao actualResposta True diferencaTempo (last pontos)]
 		                                        return ()
 		                                else if resposta == "f" then do
 		                                        putStrLn "Você escolheu encerrar sua partida. Seu nome e ápice serão guardados no ranking e você retornará para o menu."
@@ -461,11 +461,11 @@ jogo nome questoes pontos
 		                                        tempoResposta <- getCurrentTime
 		                                        let timeResposta = floor $ utctDayTime tempoResposta :: Int
 		                                        let diferencaTempo = timeResposta - timePergunta
-		                                        pontos ++ (calculaPontos questao resposta False diferencaTempo (last pontos))
+		                                        let pontos = pontos ++ [calculaPontos questao resposta False diferencaTempo (last pontos)]
 		                                        return ()
 		                                else do 
 		                                        let w = [(last pontos) - 20]
-		                                        pontos ++ w
+		                                        let pontos = pontos ++ w
 		                                        return ()
 		                                --chamada recursiva:
 		                                jogo nome (questoes ++ [questao]) pontos

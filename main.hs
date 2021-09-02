@@ -241,7 +241,7 @@ voltaTelaEnter f = do
 
 mostraRanking :: IO ()
 mostraRanking = do
-        ranking <- readFile' "ranking.txt"
+        ranking <- readFile "ranking.txt"
         if not (ehVazio ranking) then do
                 let rankingEmTupla = map (converteEmTupla . words) (lines ranking)
                 let rankingOrdenado = ordenaDecrescente rankingEmTupla
@@ -289,7 +289,7 @@ ehVazio x = x == ""
 excluiJogadorRanking :: IO ()
 excluiJogadorRanking = do
 
-        ranking <- readFile' "ranking.txt"
+        ranking <- readFile "ranking.txt"
         if not (ehVazio ranking) then do
                 putStrLn "Qual o nome do jogador que você deseja excluir do ranking?"
                 nome <- getLine
@@ -309,7 +309,7 @@ excluiJogadorRanking = do
 
 excluiRanking :: IO ()
 excluiRanking = do
-        ranking <- readFile' "ranking.txt"
+        ranking <- readFile "ranking.txt"
         if ehVazio ranking then do
                putStrLn "Não foi possível excluir ranking, não temos nenhuma pontuação registrada."
                telaModificaRanking
@@ -334,6 +334,70 @@ invalidOption f = do
         f
 
 
+
+getEnunciadoQuestao :: Perguntinha -> String
+getEnunciadoQuestao (Perguntinha enunciadoQuestao _ _ _ _ _ _) = enunciadoQuestao
+
+getAlternativaA :: Perguntinha -> String
+getAlternativaA (Perguntinha _ enunciadoAlternativaA _ _ _ _ _) = enunciadoAlternativaA
+
+getAlternativaB :: Perguntinha -> String
+getAlternativaB (Perguntinha _ _ enunciadoAlternativaB _ _ _ _) = enunciadoAlternativaB
+
+getAlternativaC :: Perguntinha -> String
+getAlternativaC (Perguntinha _ _ _ enunciadoAlternativaC _ _ _) = enunciadoAlternativaC
+
+getAlternativaD :: Perguntinha -> String
+getAlternativaD (Perguntinha _ _ _ _ enunciadoAlternativaD _ _) = enunciadoAlternativaD
+
+getEnunciadoDica :: Perguntinha -> String
+getEnunciadoDica (Perguntinha _ _ _ _ _ enunciadoDica _) = enunciadoDica
+
+getAlternativaCorreta :: Perguntinha -> String
+getAlternativaCorreta (Perguntinha _ _ _ _ _ _ enunciadoAlternativaCorreta) = enunciadoAlternativaCorreta
+
+exibeQuestao :: Perguntinha -> IO()
+exibeQuestao perguntinha = do     
+        putStrLn (getEnunciadoQuestao perguntinha)
+        putStrLn ("a) " ++ (getAlternativaA perguntinha))
+        putStrLn ("b) " ++ (getAlternativaB perguntinha))
+        putStrLn ("c) " ++ (getAlternativaC perguntinha))
+        putStrLn ("d) " ++ (getAlternativaD perguntinha))
+        putStrLn ("e) Ver dica")
+        putStrLn ("f) Sair do jogo")
+
+showDica :: Perguntinha -> IO()
+showDica perguntinha = do
+        putStrLn ("Dica: " ++ (getEnunciadoDica perguntinha))
+
+
+acertouQuestao :: Perguntinha -> String -> Bool
+acertouQuestao perguntinha resposta  
+        | getAlternativaCorreta perguntinha == resposta = True
+        | otherwise = False
+
+
+pacertouQuestao :: Bool -> Int -> Int -> Int
+pacertouQuestao teveDica tempoGasto ultimaPontuacao 
+        | teveDica = 20 - 5 - tempoGasto + ultimaPontuacao
+        | otherwise = 20 - tempoGasto + ultimaPontuacao
+
+
+errouQuestao :: Bool -> Int -> Int -> Int
+errouQuestao teveDica tempoGasto ultimaPontuacao 
+        | teveDica = ((-1) * (20 + tempoGasto)) + ultimaPontuacao
+        | otherwise = (-1) * (20 + tempoGasto) + ultimaPontuacao
+
+
+calculaPontos :: Perguntinha -> String -> Bool -> Int -> Int -> Int
+calculaPontos perguntinha resposta teveDica tempoGasto ultimaPontuacao 
+        | acertouQuestao perguntinha resposta = pacertouQuestao teveDica tempoGasto ultimaPontuacao 
+        | otherwise = errouQuestao teveDica tempoGasto ultimaPontuacao 
+
+
+
+
+
 --esboço/pseudocodigo do metodo de jogo
 --recebe como primeiro parametro uma lista de Perguntinha das questoes que ja foram selecionadas anteriormente
 --recebe como segundo parametro uma lista de inteiros correspondente as pontuacoes do jogador numa partida
@@ -341,54 +405,72 @@ jogo :: String -> [Perguntinha] -> [Int] -> IO()
 jogo nome questoes pontos
                 | (last pontos) < 0 = do
                         putStrLn $ "Sua pontuação foi menor que zero. Sua partida será encerrada, mas seu nome e seu ápice serão guardados no ranking."
-                        putStrLn $ nome ++ ", " ++ "seu ápice foi:" ++ (show getApex (pontos))
+                        putStrLn $ nome ++ ", " ++ "seu ápice foi:" ++ (show (getApex pontos))
                         cadastraNoRanking (nome, (getApex pontos))
                         showMenu
                 | otherwise = do
                         -- randomQuestao eh o metodo que escolhe aleatoriamente uma questao para ser respondida. retorna Perguntinha.
                         -- "a" eh o parametro do metodo. certamente deve ser o arquivo em que as questoes estao salvas
-                        existePerguntas <- doesFileExist "perguntinhas.txt"
+                        existePerguntas <- doesFileExist "perguntinhas.txt"                        
+                        
                         if not existePerguntas then do
                                 putStrLn $ "Ainda não há questões cadastradas no sistema."
-                                menu
+                                showMenu
+                                return ()
                         else do
                                 perguntas <- readFile "perguntinhas.txt"
+                                
                                 let quantidadePerguntas = length (lines perguntas)
                                 if quantidadePerguntas == (length questoes) then do
                                         putStrLn "Todas as perguntas já foram respondidas. Seu nome e ápice serão guardados no ranking e o jogo será encerrado."
-                                        putStrLn $ nome ++ ", " ++ "seu ápice foi:" ++ (show getApex (pontos))
+                                        putStrLn $ nome ++ ", " ++ "seu ápice foi:" ++ (show (getApex pontos))
                                         cadastraNoRanking (nome, (getApex pontos))
                                         showMenu
+                                        return ()
                                 else do
                                         geradorAleatorio <- newStdGen
-                                        let numeroDaLinha = randomR (1, quantidadePerguntas) geradorAleatorio
-                                        let questao = getQuestao numeroDaLinha -- getQuestao recebe um inteiro correspondente à linha em que a pergunta esta armazenada em perguntinhas.txt e retorna um Perguntinha
-                                        if questao elem questoes then
+                                        let numeroDaLinha = randomR (0, quantidadePerguntas - 1) geradorAleatorio
+                                        let perguntinhas = lines perguntas
+                                        let perguntinha = perguntinhas !! (fst numeroDaLinha)
+                                        let questao = read perguntinha :: Perguntinha
+					
+                                        if elem questao questoes then do
                                                 jogo nome questoes pontos
-                                        exibeQuestao questao -- recebe um Perguntinha como parâmetro e exibe a pergunta, as alternativas e outras duas alternativas extras: alternativa 'e)', que exibe uma dica e alternativa 'f)' que encerra o jogo
-                                        tempoPergunta <- getCurrentTime
-                                        let timePergunta = floor $ utctDayTime tempoPergunta :: Int
-                                        resposta <- getLine
-                                        if resposta == "e" then do
-                                                showDica questao
-                                                actualResposta <- getLine
-                                                tempoResposta <- getCurrentTime
-                                                let timeResposta = floor $ utctDayTime tempoResposta :: Int
-                                                let diferencaTempo = timeResposta - timePergunta
-                                                pontos ++ [calculaPontos questao True diferencaTempo (last pontos)]
-                                        else if resposta == "f" then do
-                                                putStrLn "Você escolheu encerrar sua partida. Seu nome e ápice serão guardados no ranking e você retornará para o menu."
-                                                putStrLn $ nome ++ ", " ++ "seu ápice foi:" ++ (show getApex (pontos))
-                                                cadastraNoRanking (nome, (getApex pontos))
-                                                showMenu
-                                        else if ehValida resposta then
-                                                tempoResposta <- getCurrentTime
-                                                let timeResposta = floor $ utctDayTime tempoResposta :: Int
-                                                let diferencaTempo = timeResposta - timePergunta
-                                                pontos ++ [calculaPontos questao False diferencaTempo (last pontos)]
-                                        else pontos ++ [(last pontos) - 20]
-                                        --chamada recursiva:
-                                        jogo nome (questoes ++ [questao]) pontos
+                                                return ()
+                                        
+                                        else do
+		                                exibeQuestao questao  
+		                                tempoPergunta <- getCurrentTime
+		                                let timePergunta = floor $ utctDayTime tempoPergunta :: Int
+		                                resposta <- getLine
+		                                if resposta == "e" then do
+		                                        showDica questao
+		                                        actualResposta <- getLine
+		                                        tempoResposta <- getCurrentTime
+		                                        let timeResposta = floor $ utctDayTime tempoResposta :: Int
+		                                        let diferencaTempo = timeResposta - timePergunta
+		                                        pontos ++ (calculaPontos questao actualResposta True diferencaTempo (last pontos))
+		                                        return ()
+		                                else if resposta == "f" then do
+		                                        putStrLn "Você escolheu encerrar sua partida. Seu nome e ápice serão guardados no ranking e você retornará para o menu."
+		                                        putStrLn $ nome ++ ", " ++ "seu ápice foi:" ++ (show (getApex pontos))
+		                                        cadastraNoRanking (nome, (getApex pontos))
+		                                        showMenu
+		                                        return ()
+		                                else if ehValida resposta then do
+		                                        tempoResposta <- getCurrentTime
+		                                        let timeResposta = floor $ utctDayTime tempoResposta :: Int
+		                                        let diferencaTempo = timeResposta - timePergunta
+		                                        pontos ++ (calculaPontos questao resposta False diferencaTempo (last pontos))
+		                                        return ()
+		                                else do 
+		                                        let w = [(last pontos) - 20]
+		                                        pontos ++ w
+		                                        return ()
+		                                --chamada recursiva:
+		                                jogo nome (questoes ++ [questao]) pontos
+		                                return ()
+		                                 
 
 
 ehValida :: String -> Bool

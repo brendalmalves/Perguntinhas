@@ -477,6 +477,14 @@ jogo nome questoes pontos
 		                                        let w = [(last pontos) - 20]
 		                                        let pontos = pontos ++ w
 		                                        return ()
+
+                                                let lengthPontos = length pontos
+                                                
+                                                if ((pontos !! (lengthPontos - 1)) > (pontos !! (lengthPontos - 2))) then do
+                                                        putStrLn $ "Você acertou! Sua pontuação atual é de " ++ (show (last pontos)) ++ " pontos. Seu ápice nesta partida é de " ++ (show (getApex pontos)) ++ "pontos."
+                                                else do
+                                                        putStrLn $ "Você errou! Sua pontuação atual é de " ++ (show (last pontos)) ++ " pontos. Seu ápice nesta partida é de " ++ (show (getApex pontos)) ++ "pontos."
+
 		                                --chamada recursiva:
 		                                jogo nome (questoes ++ [questao]) pontos
 		                                return ()

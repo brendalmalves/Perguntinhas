@@ -68,9 +68,19 @@ menuJogador = do
 
 opcaoJogador :: String -> IO()
 opcaoJogador x
---      | x == "1" = jogo --ainda nao sei qual vai ser o nome dessa funcao entao da pra alterar depois
+        | x == "1" = iniciaJogo 
         | x == "2" = showMenu
         | otherwise = invalidOption menuJogador
+
+iniciaJogo = do
+        -- Para que a exibição do ranking tenha um formato fixo
+        putStr "Digite seu nome com até 15 caracteres: "
+        nome <- getLine
+        if length nome > 15 then do
+                putStrLn "Seu nome é maior que 15 caracteres, tente novamente."
+                iniciaJogo
+        else do
+                jogo nome [] []
 
 menuAdministrador :: IO()
 menuAdministrador = do
@@ -225,13 +235,13 @@ opcaoExcluiAdm x
 
 cadastraNoRanking :: (String, Int) -> IO()
 cadastraNoRanking tupla = do
-        rankingExiste <- doesFileExist "ranking.txt"
-        if not rankingExiste then do
+        ranking <- readFile' "ranking.txt"
+        if ehVazio ranking then do
                 file <- openFile "ranking.txt" WriteMode
-                hPutStr file (formataTuplaArquivo tupla ++ "\n")
+                hPutStr file (formataTuplaArquivo tupla)
                 hFlush file
                 hClose file
-        else appendFile "ranking.txt" (formataTuplaArquivo tupla ++ "\n")
+        else appendFile "ranking.txt"  ("\n" ++ formataTuplaArquivo tupla) 
 
 voltaTelaEnter :: IO b -> IO b
 voltaTelaEnter f = do
@@ -241,7 +251,7 @@ voltaTelaEnter f = do
 
 mostraRanking :: IO ()
 mostraRanking = do
-        ranking <- readFile "ranking.txt"
+        ranking <- readFile' "ranking.txt"
         if not (ehVazio ranking) then do
                 let rankingEmTupla = map (converteEmTupla . words) (lines ranking)
                 let rankingOrdenado = ordenaDecrescente rankingEmTupla
@@ -252,8 +262,8 @@ mostraRanking = do
 
 formataRanking :: [(String, Int)] -> String
 formataRanking ranking = "\nAbaixo estão os nicknames dos jogadores que conseguiram fazer atingiram o maior ápice durante uma partida de Perguntinhas\n" ++
-                                                 "Jogador    | Pontuação\n" ++
-                         "-----------------------\n" ++
+                                                 "Jogador         | Pontuação\n" ++
+                         "----------------------------\n" ++
                          unlines (map formataTupla ranking)
 
 converteEmTupla :: [String] -> (String, Int)
@@ -269,7 +279,7 @@ formataTupla (x, y) = x ++ concat(adicionaEspaco(length x)) ++ " | " ++ show y
 -- 
 adicionaEspaco :: Int -> [String]
 adicionaEspaco x
-        | x < 10 = replicate (10 - x) " "
+        | x < 15 = replicate (15 - x) " "
         | otherwise = []
 
 -- Transforma tupla em nomeJogador pontuação, para adição no aquivo do ranking
@@ -289,7 +299,7 @@ ehVazio x = x == ""
 excluiJogadorRanking :: IO ()
 excluiJogadorRanking = do
 
-        ranking <- readFile "ranking.txt"
+        ranking <- readFile' "ranking.txt"
         if not (ehVazio ranking) then do
                 putStrLn "Qual o nome do jogador que você deseja excluir do ranking?"
                 nome <- getLine
@@ -309,7 +319,7 @@ excluiJogadorRanking = do
 
 excluiRanking :: IO ()
 excluiRanking = do
-        ranking <- readFile "ranking.txt"
+        ranking <- readFile' "ranking.txt"
         if ehVazio ranking then do
                putStrLn "Não foi possível excluir ranking, não temos nenhuma pontuação registrada."
                telaModificaRanking
@@ -433,13 +443,13 @@ jogo nome questoes pontos
                                         let perguntinhas = lines perguntas
                                         let perguntinha = perguntinhas !! (fst numeroDaLinha)
                                         let questao = read perguntinha :: Perguntinha
-					
+
                                         if elem questao questoes then do
                                                 jogo nome questoes pontos
                                                 return ()
                                         
                                         else do
-		                                exibeQuestao questao  
+                                                exibeQuestao questao  
 		                                tempoPergunta <- getCurrentTime
 		                                let timePergunta = floor $ utctDayTime tempoPergunta :: Int
 		                                resposta <- getLine

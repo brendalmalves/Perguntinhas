@@ -80,7 +80,7 @@ iniciaJogo = do
                 putStrLn "Seu nome é maior que 15 caracteres, tente novamente."
                 iniciaJogo
         else do
-                jogo nome [] []
+                jogo nome [] [0]
 
 menuAdministrador :: IO()
 menuAdministrador = do

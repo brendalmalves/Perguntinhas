@@ -43,7 +43,7 @@ confirmMenu :: IO ()
 confirmMenu = do
         putStrLn "Tem certeza que deseja excluir sua conta? Essa ação é irreversível."
         putStrLn "1 - Não"
-        putStrLn "2 - Sim"
+        putStrLn "2 - Sim\n"
 
         opcao <- getLine
         opcaoExcluiAdm opcao
@@ -61,7 +61,7 @@ menuJogador :: IO()
 menuJogador = do
         putStrLn "\nSelecione uma das opções abaixo:"
         putStrLn "1 - Iniciar jogo"
-        putStrLn "2 - Retornar para o menu"
+        putStrLn "2 - Retornar para o menu\n"
 
         opcao <- getLine
         opcaoJogador opcao
@@ -87,7 +87,7 @@ menuAdministrador = do
         putStrLn "\nSelecione uma das opções abaixo:"
         putStrLn "1 - Já tenho cadastro (fazer login)"
         putStrLn "2 - Não tenho cadastro (criar conta)"
-        putStrLn "3 - Retornar para o menu"
+        putStrLn "3 - Retornar para o menu\n"
 
         opcao <- getLine
         opcaoAdministrador opcao
@@ -98,7 +98,7 @@ segundoMenuAdministrador = do
         putStrLn "1 - Cadastrar uma nova Perguntinha"
         putStrLn "2 - Modificar ranking"
         putStrLn "3 - Excluir minha conta"
-        putStrLn "4 - Retornar para o menu"
+        putStrLn "4 - Retornar para o menu\n"
         opcao <- getLine
         segundaTelaOpcaoAdministrador opcao
 
@@ -122,7 +122,7 @@ telaModificaRanking = do
         putStrLn "\nEscolha o que você deseja fazer:"
         putStrLn "1 - Excluir jogador do ranking"
         putStrLn "2 - Excluir ranking"
-        putStrLn "3 - Retornar para o menu"
+        putStrLn "3 - Retornar para o menu\n"
         opcao <- getLine
         menuModificaRanking opcao
 

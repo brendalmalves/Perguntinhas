@@ -453,12 +453,14 @@ acertouQuestao perguntinha resposta
 
 pacertouQuestao :: Bool -> Int -> Int -> Int
 pacertouQuestao teveDica tempoGasto ultimaPontuacao 
+        | tempoGasto >= 15 = ultimaPontuacao
         | teveDica = 20 - 5 - tempoGasto + ultimaPontuacao
         | otherwise = 20 - tempoGasto + ultimaPontuacao
 
 
 errouQuestao :: Bool -> Int -> Int -> Int
-errouQuestao teveDica tempoGasto ultimaPontuacao 
+errouQuestao teveDica tempoGasto ultimaPontuacao
+        | tempoGasto >= 15 = ultimaPontuacao - 20 
         | teveDica = ((-1) * (20 + tempoGasto)) + ultimaPontuacao
         | otherwise = (-1) * (20 + tempoGasto) + ultimaPontuacao
 
@@ -526,9 +528,11 @@ jogo nome questoes pontos
 
                                                         let newPontos = pontos ++ [calculaPontos questao actualResposta True diferencaTempo (last pontos)]
                                                         let lengthNewPontos = length newPontos
-                                                
+                                                        
                                                         if ((newPontos !! (lengthNewPontos - 1)) > (newPontos !! (lengthNewPontos - 2))) then do
                                                                 putStrLn $ "Você acertou! Sua pontuação atual é de " ++ (show (last newPontos)) ++ " pontos. Seu ápice nesta partida é de " ++ (show (getApex newPontos)) ++ " pontos."
+                                                        else if ((newPontos !! (lengthNewPontos - 1)) == (newPontos !! (lengthNewPontos - 2))) then do
+                                                                putStrLn $ "Você acertou! Porém, devido à demora para responder à questão, não houve adição de pontos. Seu ápice nesta partida é de " ++ (show (getApex newPontos)) ++ " pontos."
                                                         else do
                                                                 putStrLn $ "Você errou! Sua pontuação atual é de " ++ (show (last newPontos)) ++ " pontos. Seu ápice nesta partida é de " ++ (show (getApex newPontos)) ++ " pontos."
 
@@ -550,6 +554,8 @@ jogo nome questoes pontos
                                                 
                                                         if ((newPontos !! (lengthNewPontos - 1)) > (newPontos !! (lengthNewPontos - 2))) then do
                                                                 putStrLn $ "Você acertou! Sua pontuação atual é de " ++ (show (last newPontos)) ++ " pontos. Seu ápice nesta partida é de " ++ (show (getApex newPontos)) ++ " pontos."
+                                                        else if ((newPontos !! (lengthNewPontos - 1)) == (newPontos !! (lengthNewPontos - 2))) then do
+                                                                putStrLn $ "Você acertou! Porém, devido à demora para responder à questão, não houve adição de pontos. Seu ápice nesta partida é de " ++ (show (getApex newPontos)) ++ " pontos."
                                                         else do
                                                                 putStrLn $ "Você errou! Sua pontuação atual é de " ++ (show (last newPontos)) ++ " pontos. Seu ápice nesta partida é de " ++ (show (getApex newPontos)) ++ " pontos."
 

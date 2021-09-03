@@ -298,16 +298,11 @@ cadastraNoRanking :: (String, Int) -> IO()
 cadastraNoRanking tupla = do
         existeRanking <- doesFileExist "ranking.txt"
         if not existeRanking then do
-                putStrLn $ "Não há ranking no sistema."
-                main
-        else do
-                ranking <- readFile "ranking.txt"
-                if ehVazio ranking then do
-                        file <- openFile "ranking.txt" WriteMode
-                        hPutStr file (formataTuplaArquivo tupla)
-                        hFlush file
-                        hClose file
-                else appendFile "ranking.txt"  ("\n" ++ formataTuplaArquivo tupla) 
+                file <- openFile "ranking.txt" WriteMode
+                hPutStr file (formataTuplaArquivo tupla)
+                hFlush file
+                hClose file
+        else appendFile "ranking.txt"  ("\n" ++ formataTuplaArquivo tupla) 
 
 voltaTelaEnter :: IO b -> IO b
 voltaTelaEnter f = do

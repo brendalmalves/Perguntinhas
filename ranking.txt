@@ -1,0 +1,4 @@
+lucas 20
+lucas 8
+lucas 0
+lucas 80

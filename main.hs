@@ -453,16 +453,16 @@ acertouQuestao perguntinha resposta
 
 pacertouQuestao :: Bool -> Int -> Int -> Int
 pacertouQuestao teveDica tempoGasto ultimaPontuacao 
-        | tempoGasto >= 15 = ultimaPontuacao
-        | teveDica = 20 - 5 - tempoGasto + ultimaPontuacao
+        | tempoGasto >= 20 = ultimaPontuacao
+        | teveDica = 45 - 10 - tempoGasto + ultimaPontuacao
         | otherwise = 20 - tempoGasto + ultimaPontuacao
 
 
 errouQuestao :: Bool -> Int -> Int -> Int
 errouQuestao teveDica tempoGasto ultimaPontuacao
-        | tempoGasto >= 15 = ultimaPontuacao - 20 
-        | teveDica = ((-1) * (20 + tempoGasto)) + ultimaPontuacao
-        | otherwise = (-1) * (20 + tempoGasto) + ultimaPontuacao
+        | tempoGasto >= 20 = ultimaPontuacao - 35 
+        | teveDica = ((-1) * (45 + 10 + tempoGasto)) + ultimaPontuacao
+        | otherwise = (-1) * (45 + tempoGasto) + ultimaPontuacao
 
 
 calculaPontos :: Perguntinha -> String -> Bool -> Int -> Int -> Int

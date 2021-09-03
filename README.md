@@ -2,7 +2,7 @@
 
 Projeto da disciplina Paradigmas de Linguagens de Programação, da UFCG. Perguntinhas é um jogo de perguntas e respostas em que o objetivo é o jogador não deixar com que sua pontuação seja	zerada. Este sempre enfrentará um bot, que escolherá de forma aleatória as perguntas a serem respondidas pelo usuário jogando. Este bot é uma inteligência baseada em heurística e aleatoriedade, programado para escolher as perguntas respondidas pelo jogador.
 
-# Para executar Perguntinhas
+## Para executar Perguntinhas
 
 1. Clonar o repositório e entrar na pasta do jogo, com os seguintes comandos:
 

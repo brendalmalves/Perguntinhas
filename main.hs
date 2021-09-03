@@ -96,9 +96,10 @@ segundoMenuAdministrador :: IO()
 segundoMenuAdministrador = do
         putStrLn "\nEscolha o que você deseja fazer:"
         putStrLn "1 - Cadastrar uma nova Perguntinha"
-        putStrLn "2 - Modificar ranking"
-        putStrLn "3 - Excluir minha conta"
-        putStrLn "4 - Retornar para o menu\n"
+        putStrLn "2 - Remover uma Perguntinha"
+        putStrLn "3 - Modificar ranking"
+        putStrLn "4 - Excluir minha conta"
+        putStrLn "5 - Retornar para o menu\n"
         opcao <- getLine
         segundaTelaOpcaoAdministrador opcao
 
@@ -112,9 +113,10 @@ opcaoAdministrador x
 segundaTelaOpcaoAdministrador :: String -> IO()
 segundaTelaOpcaoAdministrador x
         | x == "1" = cadastraPergunta
-        | x == "2" = telaModificaRanking
-        | x == "3" = confirmMenu
-        | x == "4" = showMenu
+        | x == "2" = removePergunta
+        | x == "3" = telaModificaRanking
+        | x == "4" = confirmMenu
+        | x == "5" = showMenu
         | otherwise = invalidOption menuAdministrador
 
 telaModificaRanking :: IO()
@@ -169,6 +171,64 @@ cadastraPerguntaGabarito pergunta alternativaA alternativaB alternativaC alterna
                 let lowerAlt = map toLower alternativaCorreta
                 cadastraPerguntaGabarito pergunta alternativaA alternativaB alternativaC alternativaD dica lowerAlt
 
+getEnunciadoQuestao :: Perguntinha -> String
+getEnunciadoQuestao (Perguntinha enunciadoQuestao _ _ _ _ _ _) = enunciadoQuestao
+
+exibeQuestoes :: [String] -> Int -> IO()
+exibeQuestoes [] n = do putStrLn "Não há mais Perguntinhas."
+exibeQuestoes (x : xs) n = do
+        putStrLn ((show n) ++ " - " ++ getEnunciadoQuestao (read x:: Perguntinha))
+        exibeQuestoes xs (n + 1)
+
+atualizaPerguntinhas :: [String] -> IO()
+atualizaPerguntinhas [] = putStrLn "Perguntinhas atualizadas!\n"
+atualizaPerguntinhas (x : xs) = do
+        perguntasCadastradas <- doesFileExist "perguntinhas.txt"
+        if not perguntasCadastradas then do
+                file <- openFile "perguntinhas.txt" WriteMode
+                hPutStr file (show (read x:: Perguntinha))
+                hFlush file
+                hClose file
+        else 
+                appendFile "perguntinhas.txt" ("\n" ++ show (read x :: Perguntinha))
+        atualizaPerguntinhas xs
+
+
+removePergunta :: IO()
+removePergunta = do
+        perguntasCadastradas <- doesFileExist "perguntinhas.txt"
+        if not perguntasCadastradas then do
+                putStrLn "Não há Perguntinhas cadastradas!"
+                showMenu
+        else do
+                file <- readFile "perguntinhas.txt" 
+                let questoes = lines file
+                exibeQuestoes questoes 1
+                putStrLn "Qual o número da Perguntinha que deseja excluir?"
+                questaoDescartada <- getLine 
+                        
+                if (isDigit (read questaoDescartada)) then do
+                        let questao = read questaoDescartada :: Int
+                                
+                        if or [(questao < 1), (questao > ((length questoes) + 1))] then do
+                                putStrLn "Número inválido!\n"
+                                removePergunta
+                        else do
+
+                                let novasQuestoes = take (questao - 1) questoes ++ drop (1 + (questao - 1)) questoes
+                                
+                                removeFile "perguntinhas.txt"
+                                
+                                atualizaPerguntinhas novasQuestoes
+                                
+                                segundoMenuAdministrador
+                                        
+                                
+                        
+                else do
+                        putStrLn "Digite um número!\n"
+                        removePergunta
+                        
 loginAdm :: IO()
 loginAdm = do
     adminCadastrado <- doesFileExist "admin.txt"
@@ -235,7 +295,7 @@ opcaoExcluiAdm x
 
 cadastraNoRanking :: (String, Int) -> IO()
 cadastraNoRanking tupla = do
-        ranking <- readFile' "ranking.txt"
+        ranking <- readFile "ranking.txt"
         if ehVazio ranking then do
                 file <- openFile "ranking.txt" WriteMode
                 hPutStr file (formataTuplaArquivo tupla)
@@ -251,7 +311,7 @@ voltaTelaEnter f = do
 
 mostraRanking :: IO ()
 mostraRanking = do
-        ranking <- readFile' "ranking.txt"
+        ranking <- readFile "ranking.txt"
         if not (ehVazio ranking) then do
                 let rankingEmTupla = map (converteEmTupla . words) (lines ranking)
                 let rankingOrdenado = ordenaDecrescente rankingEmTupla
@@ -299,7 +359,7 @@ ehVazio x = x == ""
 excluiJogadorRanking :: IO ()
 excluiJogadorRanking = do
 
-        ranking <- readFile' "ranking.txt"
+        ranking <- readFile "ranking.txt"
         if not (ehVazio ranking) then do
                 putStrLn "Qual o nome do jogador que você deseja excluir do ranking?"
                 nome <- getLine
@@ -319,7 +379,7 @@ excluiJogadorRanking = do
 
 excluiRanking :: IO ()
 excluiRanking = do
-        ranking <- readFile' "ranking.txt"
+        ranking <- readFile "ranking.txt"
         if ehVazio ranking then do
                putStrLn "Não foi possível excluir ranking, não temos nenhuma pontuação registrada."
                telaModificaRanking
@@ -342,11 +402,6 @@ invalidOption :: IO() -> IO()
 invalidOption f = do
         putStrLn "Selecione uma alternativa válida"
         f
-
-
-
-getEnunciadoQuestao :: Perguntinha -> String
-getEnunciadoQuestao (Perguntinha enunciadoQuestao _ _ _ _ _ _) = enunciadoQuestao
 
 getAlternativaA :: Perguntinha -> String
 getAlternativaA (Perguntinha _ enunciadoAlternativaA _ _ _ _ _) = enunciadoAlternativaA

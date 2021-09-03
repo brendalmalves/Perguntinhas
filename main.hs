@@ -364,6 +364,7 @@ excluiJogadorRanking = do
                 putStrLn $ "Não há ranking no sistema."
         else do 
                 ranking <- readFile' "ranking.txt"
+                mostraRanking
                 if not (ehVazio ranking) then do
                         putStrLn "Qual o nome do jogador que você deseja excluir do ranking?"
                         nome <- getLine

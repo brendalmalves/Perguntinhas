@@ -153,6 +153,7 @@ cadastraPergunta = do
         alternativaCorreta <- getLine --seria bom ter um loop (recursao) ate o usuario digitar uma alternativa valida
         let lowerAlt = map toLower alternativaCorreta
         cadastraPerguntaGabarito pergunta alternativaA alternativaB alternativaC alternativaD dica lowerAlt
+        voltaTelaEnter segundoMenuAdministrador
 
 cadastraPerguntaGabarito :: String -> String -> String -> String -> String -> String -> String -> IO()
 cadastraPerguntaGabarito pergunta alternativaA alternativaB alternativaC alternativaD dica gabarito = do

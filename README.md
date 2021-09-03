@@ -6,15 +6,15 @@ Projeto da disciplina Paradigmas de Linguagens de Programação, da UFCG. Pergun
 
 1. Clonar o repositório e entrar na pasta do jogo, com os seguintes comandos:
 
-* git clone https://github.com/brendalmalves/Perguntinhas.git
-* cd Perguntinhas
+* `git clone https://github.com/brendalmalves/Perguntinhas.git`
+* `cd Perguntinhas`
 
 2. Instalar algumas bibliotecas necessárias:
 
-* cabal install --lib random
-* cabal install --lib split
+* `cabal install --lib random` 
+* `cabal install --lib split`
 
 3. Após a instalação das bibliotecas, execute o programa:
 
-* ghci main.hs
-* main
+* `ghci main.hs`
+* `main`

@@ -415,7 +415,7 @@ jogo :: String -> [Perguntinha] -> [Int] -> IO()
 jogo nome questoes pontos
                 | (last pontos) < 0 = do
                         putStrLn $ "Sua pontuação foi menor que zero. Sua partida será encerrada, mas seu nome e seu ápice serão guardados no ranking."
-                        putStrLn $ nome ++ ", " ++ "seu ápice foi:" ++ (show (getApex pontos))
+                        putStrLn $ nome ++ ", " ++ "seu ápice foi: " ++ (show (getApex pontos))
                         cadastraNoRanking (nome, (getApex pontos))
                         showMenu
                 | otherwise = do
@@ -450,45 +450,52 @@ jogo nome questoes pontos
                                         
                                         else do
                                                 exibeQuestao questao  
-		                                tempoPergunta <- getCurrentTime
-		                                let timePergunta = floor $ utctDayTime tempoPergunta :: Int
-		                                resposta <- getLine
-		                                if resposta == "e" then do
-		                                        showDica questao
-		                                        actualResposta <- getLine
-		                                        tempoResposta <- getCurrentTime
-		                                        let timeResposta = floor $ utctDayTime tempoResposta :: Int
-		                                        let diferencaTempo = timeResposta - timePergunta
-		                                        let pontos = pontos ++ [calculaPontos questao actualResposta True diferencaTempo (last pontos)]
-		                                        return ()
-		                                else if resposta == "f" then do
-		                                        putStrLn "Você escolheu encerrar sua partida. Seu nome e ápice serão guardados no ranking e você retornará para o menu."
-		                                        putStrLn $ nome ++ ", " ++ "seu ápice foi:" ++ (show (getApex pontos))
-		                                        cadastraNoRanking (nome, (getApex pontos))
-		                                        showMenu
-		                                        return ()
-		                                else if ehValida resposta then do
-		                                        tempoResposta <- getCurrentTime
-		                                        let timeResposta = floor $ utctDayTime tempoResposta :: Int
-		                                        let diferencaTempo = timeResposta - timePergunta
-		                                        let pontos = pontos ++ [calculaPontos questao resposta False diferencaTempo (last pontos)]
-		                                        return ()
-		                                else do 
-		                                        let w = [(last pontos) - 20]
-		                                        let pontos = pontos ++ w
-		                                        return ()
+                                                tempoPergunta <- getCurrentTime
+                                                let timePergunta = floor $ utctDayTime tempoPergunta :: Int
+                                                resposta <- getLine
+                                                if resposta == "e" then do
+                                                        showDica questao
+                                                        actualResposta <- getLine
+                                                        tempoResposta <- getCurrentTime
+                                                        let timeResposta = floor $ utctDayTime tempoResposta :: Int
+                                                        let diferencaTempo = timeResposta - timePergunta
 
-                                                let lengthPontos = length pontos
+                                                        let newPontos = pontos ++ [calculaPontos questao actualResposta True diferencaTempo (last pontos)]
+                                                        let lengthNewPontos = length newPontos
                                                 
-                                                if ((pontos !! (lengthPontos - 1)) > (pontos !! (lengthPontos - 2))) then do
-                                                        putStrLn $ "Você acertou! Sua pontuação atual é de " ++ (show (last pontos)) ++ " pontos. Seu ápice nesta partida é de " ++ (show (getApex pontos)) ++ "pontos."
-                                                else do
-                                                        putStrLn $ "Você errou! Sua pontuação atual é de " ++ (show (last pontos)) ++ " pontos. Seu ápice nesta partida é de " ++ (show (getApex pontos)) ++ "pontos."
+                                                        if ((newPontos !! (lengthNewPontos - 1)) > (newPontos !! (lengthNewPontos - 2))) then do
+                                                                putStrLn $ "Você acertou! Sua pontuação atual é de " ++ (show (last newPontos)) ++ " pontos. Seu ápice nesta partida é de " ++ (show (getApex newPontos)) ++ " pontos."
+                                                        else do
+                                                                putStrLn $ "Você errou! Sua pontuação atual é de " ++ (show (last newPontos)) ++ " pontos. Seu ápice nesta partida é de " ++ (show (getApex newPontos)) ++ " pontos."
 
-		                                --chamada recursiva:
-		                                jogo nome (questoes ++ [questao]) pontos
-		                                return ()
-		                                 
+                                                        jogo nome (questoes ++ [questao]) ([calculaPontos questao actualResposta True diferencaTempo (last pontos)])
+                                                        return ()
+                                                else if resposta == "f" then do
+                                                        putStrLn "Você escolheu encerrar sua partida. Seu nome e ápice serão guardados no ranking e você retornará para o menu."
+                                                        putStrLn $ nome ++ ", " ++ "seu ápice foi:" ++ (show (getApex pontos))
+                                                        cadastraNoRanking (nome, (getApex pontos))
+                                                        showMenu
+                                                        return ()
+                                                else if ehValida resposta then do
+                                                        tempoResposta <- getCurrentTime
+                                                        let timeResposta = floor $ utctDayTime tempoResposta :: Int
+                                                        let diferencaTempo = timeResposta - timePergunta
+
+                                                        let newPontos = pontos ++ [calculaPontos questao resposta False diferencaTempo (last pontos)]
+                                                        let lengthNewPontos = length newPontos
+                                                
+                                                        if ((newPontos !! (lengthNewPontos - 1)) > (newPontos !! (lengthNewPontos - 2))) then do
+                                                                putStrLn $ "Você acertou! Sua pontuação atual é de " ++ (show (last newPontos)) ++ " pontos. Seu ápice nesta partida é de " ++ (show (getApex newPontos)) ++ " pontos."
+                                                        else do
+                                                                putStrLn $ "Você errou! Sua pontuação atual é de " ++ (show (last newPontos)) ++ " pontos. Seu ápice nesta partida é de " ++ (show (getApex newPontos)) ++ " pontos."
+
+                                                        jogo nome (questoes ++ [questao]) (pontos ++ [calculaPontos questao resposta False diferencaTempo (last pontos)])
+                                                        return ()
+                                                else do 
+                                                        let w = [(last pontos) - 20]
+                                                        jogo nome (questoes ++ [questao]) (pontos ++ w)
+                                                        return ()
+                                                 
 
 
 ehValida :: String -> Bool

@@ -296,13 +296,18 @@ opcaoExcluiAdm x
 
 cadastraNoRanking :: (String, Int) -> IO()
 cadastraNoRanking tupla = do
-        ranking <- readFile "ranking.txt"
-        if ehVazio ranking then do
-                file <- openFile "ranking.txt" WriteMode
-                hPutStr file (formataTuplaArquivo tupla)
-                hFlush file
-                hClose file
-        else appendFile "ranking.txt"  ("\n" ++ formataTuplaArquivo tupla) 
+        existeRanking <- doesFileExist "ranking.txt"
+        if not existeRanking then do
+                putStrLn $ "Não há ranking no sistema."
+                main
+        else do
+                ranking <- readFile "ranking.txt"
+                if ehVazio ranking then do
+                        file <- openFile "ranking.txt" WriteMode
+                        hPutStr file (formataTuplaArquivo tupla)
+                        hFlush file
+                        hClose file
+                else appendFile "ranking.txt"  ("\n" ++ formataTuplaArquivo tupla) 
 
 voltaTelaEnter :: IO b -> IO b
 voltaTelaEnter f = do
@@ -359,38 +364,46 @@ ehVazio x = x == ""
 
 excluiJogadorRanking :: IO ()
 excluiJogadorRanking = do
+        existeRanking <- doesFileExist "ranking.txt"
+        if not existeRanking then do
+                putStrLn $ "Não há ranking no sistema."
+        else do 
+                ranking <- readFile "ranking.txt"
+                if not (ehVazio ranking) then do
+                        putStrLn "Qual o nome do jogador que você deseja excluir do ranking?"
+                        nome <- getLine
 
-        ranking <- readFile "ranking.txt"
-        if not (ehVazio ranking) then do
-                putStrLn "Qual o nome do jogador que você deseja excluir do ranking?"
-                nome <- getLine
+                        let rankingCompletoEmTupla = map (converteEmTupla . words) (lines ranking)
+                        let rankingFiltrado = filter ((/=nome).fst) rankingCompletoEmTupla
 
-                let rankingCompletoEmTupla = map (converteEmTupla . words) (lines ranking)
-                let rankingFiltrado = filter ((/=nome).fst) rankingCompletoEmTupla
-
-                if rankingCompletoEmTupla == rankingFiltrado then do
-                        putStrLn "Não existe jogador no ranking com este nome de usúario. Tente novamente"
-                        telaModificaRanking
-                else do
-                        readicionaNoArquivo rankingFiltrado
-                        putStrLn "Jogador removido com sucesso."
-        else
-                putStrLn "Não é possível excluir jogador do ranking, não temos nenhuma pontuação registrada"
+                        if rankingCompletoEmTupla == rankingFiltrado then do
+                                putStrLn "Não existe jogador no ranking com este nome de usúario. Tente novamente"
+                                telaModificaRanking
+                        else do
+                                readicionaNoArquivo rankingFiltrado
+                                putStrLn "Jogador removido com sucesso."
+                else
+                        putStrLn "Não é possível excluir jogador do ranking, não temos nenhuma pontuação registrada"
         voltaTelaEnter telaModificaRanking
 
 excluiRanking :: IO ()
 excluiRanking = do
-        ranking <- readFile "ranking.txt"
-        if ehVazio ranking then do
-               putStrLn "Não foi possível excluir ranking, não temos nenhuma pontuação registrada."
-               telaModificaRanking
+        existe <- doesFileExist "ranking.txt"
+        if not existe then do
+                putStrLn $ "Ainda não aconteceram partidas neste sistema."
+                voltaTelaEnter telaModificaRanking
         else do
-                file <- openFile "ranking.txt" WriteMode
-                hPutStr file ""
-                hFlush file
-                hClose file
-                putStrLn "Ranking excluído com sucesso."
-        voltaTelaEnter telaModificaRanking
+                ranking <- readFile "ranking.txt"
+                if ehVazio ranking then do
+                       putStrLn "Não foi possível excluir ranking, não temos nenhuma pontuação registrada."
+                       telaModificaRanking
+                else do
+                        file <- openFile "ranking.txt" WriteMode
+                        hPutStr file ""
+                        hFlush file
+                        hClose file
+                        putStrLn "Ranking excluído com sucesso."
+                voltaTelaEnter telaModificaRanking
 
 sobre :: IO()
 sobre = do

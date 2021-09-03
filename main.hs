@@ -208,7 +208,7 @@ removePergunta = do
                 putStrLn "Qual o número da Perguntinha que deseja excluir?"
                 questaoDescartada <- getLine 
                         
-                if (isDigit (read questaoDescartada)) then do
+                if all isDigit questaoDescartada then do
                         let questao = read questaoDescartada :: Int
                                 
                         if or [(questao < 1), (questao > ((length questoes) + 1))] then do

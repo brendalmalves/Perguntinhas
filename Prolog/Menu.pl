@@ -47,4 +47,38 @@ menuAdministrador :-
 invalidOption :-
 	 writeln("Selecione uma alternativa válida."), nl.
 	
+confirmMenu :-
+	writeln("Tem certeza que deseja excluir sua conta? Essa ação é irreversível."),
+	writeln("1 - Não"),
+	writeln("2 - Sim\n"),
+	read(Option),
+	opcaoExcluiAdm(Option),
+	halt.
 
+menuJogador :-
+	writeln("\nSelecione uma das opções abaixo:"),
+	writeln("1 - Iniciar jogo"),
+	writeln("2 - Retornar para o menu\n"),
+	read(Option),
+	opcaoJogador(opcao),
+	halt.
+
+segundoMenuAdministrador :-
+	writeln("\nEscolha o que você deseja fazer:"),
+	writeln("1 - Cadastrar uma nova Perguntinha"),
+	writeln("2 - Remover uma Perguntinha"),
+	writeln("3 - Modificar ranking"),
+	writeln("4 - Excluir minha conta"),
+	writeln("5 - Retornar para o menu\n"),
+	read(Option),
+	segundaTelaOpcaoAdministrador(Option),
+	halt.
+
+telaModificaRanking :-
+	writeln("\nEscolha o que você deseja fazer:"),
+	writeln("1 - Excluir jogador do ranking"),
+	writeln("2 - Excluir ranking"),
+	writeln("3 - Retornar para o menu\n"),
+	read(Option),
+	menuModificaRanking(Option),
+	halt.

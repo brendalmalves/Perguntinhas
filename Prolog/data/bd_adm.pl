@@ -1,0 +1,1 @@
+:- dynamic administrador/2.

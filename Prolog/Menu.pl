@@ -27,7 +27,7 @@ menuJogador :-
 	writeln("1 - Iniciar jogo"),
 	writeln("2 - Retornar para o menu"), nl,
 	read(Option),
-	(Option == 1 -> iniciaJog;
+	(Option == 1 -> jogador: iniciaJogo, menuJogador;
 	Option == 2 -> mostraMenu;
 	invalidOption,
 	menuJogador).
@@ -38,11 +38,11 @@ menuAdministrador :-
 	writeln("2 - Não tenho cadastro (criar conta)"),
 	writeln("3 - Retornar para o menu"),
 	read(Option),
-	(Option == 1 -> login,
-	Option == 2 -> criarContaAdm,
-	Option == 3 -> mostraMenu,
+	(Option == 1 -> administrador: login, menuAdministrador;
+	Option == 2 -> administrador: cadastraAdm, menuAdministrador;
+	Option == 3 -> mostraMenu;
 	invalidOption,
-	menuAdministrador, halt).
+	menuAdministrador).
 
 invalidOption :-
 	 writeln("Selecione uma alternativa válida."), nl.

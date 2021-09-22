@@ -9,6 +9,7 @@ cadastra_adm(S) :-
 	(administrador(S)) -> nl, writeln("Administrador já cadastrado!"), nl;
 
 
+
 cadastraAdm :- 
 	nl, write("Insira sua senha: "), nl,
 	read(Senha),
@@ -23,5 +24,9 @@ excluiAdm :-
 
 exclui_cat(Senha) :- 
 	setup_bd,
+	retract(administrador(Senha)),
+	tell('./data/bd_adm.pl'), nl,
+		listing(administrador/2),
+		told.
 
 

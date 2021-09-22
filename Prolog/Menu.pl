@@ -1,5 +1,4 @@
 main :-
-	tty_clear,
 	apresentacao,
 	mostraMenu, nl.
 
@@ -25,11 +24,11 @@ mostraMenu :-
 
 menuJogador :- 
 	writeln("Selecione uma das opções abaixo:"), nl,
-	writeln("1 - Iniciar jogo")
-	writeln("2 - Retornar para o menu"), nl.
+	writeln("1 - Iniciar jogo"),
+	writeln("2 - Retornar para o menu"), nl,
 	read(Option),
-	(Option == 1 -> iniciaJogo
-	Option == 2 -> mostraMenu,
+	(Option == 1 -> iniciaJog;
+	Option == 2 -> mostraMenu;
 	invalidOption,
 	menuJogador).
 
@@ -43,7 +42,7 @@ menuAdministrador :-
 	Option == 2 -> criarContaAdm,
 	Option == 3 -> mostraMenu,
 	invalidOption,
-	menuAdministrador).
+	menuAdministrador, halt).
 
 invalidOption :-
 	 writeln("Selecione uma alternativa válida."), nl.

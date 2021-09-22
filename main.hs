@@ -312,7 +312,7 @@ voltaTelaEnter f = do
 
 mostraRanking :: IO ()
 mostraRanking = do
-        ranking <- readFile "ranking.txt"
+        ranking <- readFile' "ranking.txt"
         if not (ehVazio ranking) then do
                 let rankingEmTupla = map (converteEmTupla . words) (lines ranking)
                 let rankingOrdenado = ordenaDecrescente rankingEmTupla
@@ -363,7 +363,7 @@ excluiJogadorRanking = do
         if not existeRanking then do
                 putStrLn $ "Não há ranking no sistema."
         else do 
-                ranking <- readFile "ranking.txt"
+                ranking <- readFile' "ranking.txt"
                 mostraRanking
                 if not (ehVazio ranking) then do
                         putStrLn "Qual o nome do jogador que você deseja excluir do ranking?"
@@ -389,7 +389,7 @@ excluiRanking = do
                 putStrLn $ "Ainda não aconteceram partidas neste sistema."
                 voltaTelaEnter telaModificaRanking
         else do
-                ranking <- readFile "ranking.txt"
+                ranking <- readFile' "ranking.txt"
                 if ehVazio ranking then do
                        putStrLn "Não foi possível excluir ranking, não temos nenhuma pontuação registrada."
                        telaModificaRanking

@@ -22,7 +22,7 @@ login_adm :-
 cadastra_adm :-
 	setup_bd,
 	arquivo_vazio -> cadastraAdm;
-	(administrador(_)) -> writeln("Administrador já cadastrado. Insira sua senha."), nl, false;
+	(administrador(_)) -> writeln("Administrador já cadastrado. Insira sua senha."), nl;
 	cadastraAdm.
 	 
 

@@ -1,5 +1,6 @@
 :- use_module(administrador).
 :- use_module(ranking).
+:- use_module(sobre).
 :- encoding(utf8).
 
 main :-
@@ -19,9 +20,9 @@ mostraMenu :-
 	writeln("5 - Sair"),
 	read_line_to_string(user_input, Option),
 	(Option == "1" -> menuJogador;
-	Option == "2" -> menuAdministrador:;
+	Option == "2" -> menuAdministrador;
 	Option == "3" -> ranking:mostra_ranking, volta_tela_enter -> mostraMenu;
-	Option == "4" -> sobrePerguntinhas:mostra_texto, volta_tela_enter -> mostraMenu;
+	Option == "4" -> sobre:mostra_texto, volta_tela_enter -> mostraMenu;
 	Option == "5" -> sair;
 	invalidOption,
 	mostraMenu, nl, halt).
@@ -107,5 +108,4 @@ telaModificaRanking :-
 	Option == "3" -> segundoMenuAdministrador;
 	invalidOption,
 	telaModificaRanking).
-
-sobrePerguntinhas :- 
+ 

@@ -1,3 +1,4 @@
+:- module('sobre', [mostra_texto/0]).
 :- encoding(utf8).
 
 setup_bd :-
@@ -5,10 +6,5 @@ setup_bd :-
 
 mostra_texto :-
     setup_bd,
-    (sobre(X)) -> mostraTexto;
-    writeln("foi").
-
-
-mostraTexto :-
-    assertz(sobre()).
-
+    sobre(X), nl,
+    write(X).

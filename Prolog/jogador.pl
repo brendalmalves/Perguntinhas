@@ -22,8 +22,8 @@ inicia_jogo (Nome, pontuacoes, questoesSorteadas, R) :-
 getApex(L, R) :- 
     length(L, Len),
     Len =:= 1,
-    [H|T],
-    L = R.
+    [H|T] = L,
+    R = H.
 
 getApex(L, R) :-
     [H|T] = L,

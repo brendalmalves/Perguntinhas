@@ -29,6 +29,7 @@ mostraMenu :-
 
 sair :- halt.
 
+
 volta_tela_enter :-
 	nl,
 	writeln("Pressione enter para voltar ao menu anterior"),

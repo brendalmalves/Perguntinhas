@@ -37,19 +37,43 @@ inicia_jogo(Nome, UltimaPontuacao, Apex, QuestoesSorteadas) :-
 	get_time(exibiu),
 	append(QuestoesSorteadas, [Rand], QuestoesSorteadas1),
 	read(Alternativa),
-	get_time(respondeu),
-	diff = timediff(exibiu, respondeu, dif),
-	respondeQuestao(Q, Alternativa, Pontuacao, DiffTempo),
-	(Pontuacao >= Apex -> inicia_jogo(Nome, Pontuacao, Pontuacao, QuestoesSorteadas1));
-	inicia_jogo(Nome, Pontuacao, Apex, QuestoesSorteadas1).
+	string_lower(Alternativa, Alternativa1),
+	(Alternativa1 =:= "e" -> exibeDica(Q),
+				read(Alternativa2),
+				get_time(respondeu),
+				string_lower(Alternativa2, Alternativa3),
+				timediff(exibiu, respondeu, dif),
+				respondeQuestao(Q, Alternativa3), Pontuacao, DiffTempo, True, PontuacaoAtual);
+
+				get_time(respondeu),
+				timediff(exibiu, respondeu, dif),
+				respondeQuestao(Q, Alternativa1, Pontuacao, DiffTempo, False, PontuacaoAtual),
+				(Pontuacao >= Apex -> inicia_jogo(Nome, Pontuacao, Pontuacao, QuestoesSorteadas1));
+				inicia_jogo(Nome, Pontuacao, Apex, QuestoesSorteadas1).
+				).
 
 
 timediff(DT1, DT2, Secs) :-
         date_time_stamp(DT1, TS1),
         date_time_stamp(DT2, TS2),
-        Sec is TS2 - TS1.
+        Secs is TS2 - TS1.
 
-respondeQuestao(Q, Alternativa, Pontuacao, DiffTempo) :-
-	gabarito(Q, G),
-	Alternativa =:= G,
-	
+respondeQuestao(Q, Alternativa, Pontuacao, DiffTempo, TeveDica, PontuacaoAtual) :-
+	DiffTempo >= 15,
+	PontuacaoActual is Pontuacao - 20.
+respondeQuestao(Q, Alternativa, Pontuacao, DiffTempo, True, PontuacaoAtual) :-
+	getGabarito(Q, G),
+	G =:= Alternativa,
+	PontuacaoAtual is 20 - 5 - DiffTempo + Pontuacao.
+respondeQuestao(Q, Alternativa, Pontuacao, DiffTempo, False, PontuacaoAtual) :-
+	getGabarito(Q, G),
+	G =:= Alternativa,
+	PontuacaoAtual is 20 - DiffTempo + Pontuacao.
+respondeQuestao(Q, Alternativa, Pontuacao, DiffTempo, True, PontuacaoAtual) :-
+	getGabarito(Q, G),
+	G =\= Alternativa,
+	PontuacaoAtual is ((-1) * (20 + DiffTempo)) + Pontuacao.
+respondeQuestao(Q, Alternativa, Pontuacao, DiffTempo, False, PontuacaoAtual) :-
+	getGabarito(Q, G),
+	G =\= Alternativa,
+	PontuacaoAtual is (-1) * (20 + DiffTempo) + Pontuacao.

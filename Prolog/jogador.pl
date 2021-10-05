@@ -1,16 +1,14 @@
+:- module('jogador', [iniciaJogo/0]).
 :- use_module(ranking).
 :- use_module(Menu).
-
-setup_bd :-
-	consult('./data/bd_jogador.pl').
+:- encoding(utf8).
 
 iniciaJogo :- 
-	setup_bd,
 	writeln("Digite seu nome com até 15 caracteres: "),
 	read_line_to_string(user_input, Nome), 
 	string_length(Nome, X),
-	(X <= 15) -> inicia_jogo, nl;
-	write("Seu nome é maior que 15 caracteres, tente novamente."), iniciaJogo, nl.
+	X =< 15 -> inicia_jogo(Nome, 0, 0, []), nl;
+	write("Seu nome é maior que 15 caracteres, tente novamente."), nl, iniciaJogo, nl.
 
 inicia_jogo(Nome, UltimaPontuacao, Apex, QuestoesSorteadas) :-
 	UltimaPontuacao < 0,

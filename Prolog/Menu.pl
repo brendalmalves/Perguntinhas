@@ -1,6 +1,8 @@
 :- use_module(administrador).
 :- use_module(ranking).
 :- use_module(sobre).
+:- use_module(jogador).
+
 :- encoding(utf8).
 
 main :-

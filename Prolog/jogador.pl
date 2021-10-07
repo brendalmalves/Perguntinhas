@@ -1,6 +1,7 @@
 :- module('jogador', [iniciaJogo/0]).
 :- use_module(ranking).
-:- use_module(Menu).
+:- use_module(perguntinha).
+:- use_module(menu).
 :- encoding(utf8).
 
 iniciaJogo :- 
@@ -14,22 +15,22 @@ inicia_jogo(Nome, UltimaPontuacao, Apex, QuestoesSorteadas) :-
 	UltimaPontuacao < 0,
 	halt.
 inicia_jogo(Nome, UltimaPontuacao, Apex, QuestoesSorteadas) :-
-	%totalQuestoes = numero total de questoes cadastradas no sistema
-	totalQuestoes =:= 0,
+	getTotalQuestoes(TotalQuestoes),
+	TotalQuestoes =:= 0,
 	writeln("Ainda não há questões cadastradas no sistema."),
 	main,
 	halt.
 inicia_jogo(Nome, UltimaPontuacao, Apex, QuestoesSorteadas) :-
 	length(QuestoesSorteadas, Len),
-	%totalQuestoes = numero total de questoes cadastradas no sistema
-	Len =:= totalQuestoes,
+	getTotalQuestoes(TotalQuestoes),
+	Len =:= TotalQuestoes,
 	writeln("Todas as perguntas já foram respondidas. Seu nome e ápice serão guardados no ranking e o jogo será encerrado."),
 	cadastra_no_ranking(Nome, UltimaPontuacao),
 	main,
 	halt.
 inicia_jogo(Nome, UltimaPontuacao, Apex, QuestoesSorteadas) :-
-	%totalQuestoes = numero total de questoes cadastradas no sistema (usar o predicado line_count)
-	random_between(0, totalQuestoes, Rand),
+	getTotalQuestoes(TotalQuestoes),
+	random_between(0, TotalQuestoes, Rand),
 	getQuestao(Rand, Q),
 	exibeQuestao(Q),
 	get_time(exibiu),
@@ -75,3 +76,7 @@ respondeQuestao(Q, Alternativa, Pontuacao, DiffTempo, False, PontuacaoAtual) :-
 	getGabarito(Q, G),
 	G =\= Alternativa,
 	PontuacaoAtual is (-1) * (20 + DiffTempo) + Pontuacao.
+
+
+
+

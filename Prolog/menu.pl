@@ -1,6 +1,8 @@
+:- module('Menu', [segundoMenuAdministrador/0]).
 :- use_module(administrador).
 :- use_module(ranking).
 :- use_module(sobre).
+:- use_module(perguntinha).
 :- use_module(jogador).
 
 :- encoding(utf8).
@@ -91,8 +93,8 @@ segundoMenuAdministrador :-
 	
 	read_line_to_string(user_input, Option),
 	
-	(Option == "1" -> writeln("cadastra Perguntinha");
-	Option == "2" -> writeln("remover Perguntinha");
+	(Option == "1" -> perguntinha:cadastra_perguntinha, segundoMenuAdministrador;
+	Option == "2" -> perguntinha:remove_perguntinha, segundoMenuAdministrador;
 	Option == "3" -> telaModificaRanking;
 	Option == "4" -> confirmMenu;
 	Option == "5" -> mostraMenu;

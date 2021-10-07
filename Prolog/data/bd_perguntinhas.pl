@@ -1,0 +1,2 @@
+
+:- dynamic perguntinha/7.

@@ -73,15 +73,6 @@ confirmMenu :-
 	invalidOption,
 	confirmMenu).
 
-
-menuJogador :-
-	writeln("\nSelecione uma das opções abaixo:"),
-	writeln("1 - Iniciar jogo"),
-	writeln("2 - Retornar para o menu\n"),
-	read(Option),
-	opcaoJogador(Option),
-	halt.
-
 segundoMenuAdministrador :-
 	writeln("\nEscolha o que você deseja fazer:"),
 	writeln("1 - Cadastrar uma nova Perguntinha"),

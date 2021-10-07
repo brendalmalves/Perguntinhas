@@ -37,19 +37,24 @@ inicia_jogo(Nome, UltimaPontuacao, Apex, QuestoesSorteadas) :-
 	append(QuestoesSorteadas, [Rand], QuestoesSorteadas1),
 	read(Alternativa),
 	string_lower(Alternativa, Alternativa1),
-	(Alternativa1 =:= "e" -> exibeDica(Q),
-				read(Alternativa2),
-				get_time(respondeu),
-				string_lower(Alternativa2, Alternativa3),
-				timediff(exibiu, respondeu, dif),
-				respondeQuestao(Q, Alternativa3), Pontuacao, DiffTempo, True, PontuacaoAtual);
-
-				get_time(respondeu),
-				timediff(exibiu, respondeu, dif),
-				respondeQuestao(Q, Alternativa1, Pontuacao, DiffTempo, False, PontuacaoAtual),
-				(Pontuacao >= Apex -> inicia_jogo(Nome, Pontuacao, Pontuacao, QuestoesSorteadas1));
-				inicia_jogo(Nome, Pontuacao, Apex, QuestoesSorteadas1).
-				).
+	(Alternativa1 =:= "e" 
+		-> 
+		exibeDica(Q),
+		read(Alternativa2),
+		get_time(respondeu),
+		string_lower(Alternativa2, Alternativa3),
+		timediff(exibiu, respondeu, dif),
+		respondeQuestao(Q, Alternativa3, Pontuacao, DiffTempo, True, PontuacaoAtual)
+		;
+		get_time(respondeu),
+		timediff(exibiu, respondeu, dif),
+		respondeQuestao(Q, Alternativa1, Pontuacao, DiffTempo, False, PontuacaoAtual),
+			(Pontuacao >= Apex 
+				-> 
+				inicia_jogo(Nome, Pontuacao, Pontuacao, QuestoesSorteadas1)
+				;
+				inicia_jogo(Nome, Pontuacao, Apex, QuestoesSorteadas1))
+).
 
 
 timediff(DT1, DT2, Secs) :-

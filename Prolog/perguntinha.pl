@@ -1,4 +1,4 @@
-:- module('perguntinha', [cadastra_perguntinha/0, remove_perguntinha/0, getQuestao/2, getTotalQuestoes/1, teste/0, exibeQuestoes/0, exibeQuestao/1, existe_perguntinha/1]).
+:- module('perguntinha', [cadastra_perguntinha/0, remove_perguntinha/0, getQuestao/2, getTotalQuestoes/1, teste/0, exibeQuestoes/0, exibeQuestao/1, exibeDica/1, existe_perguntinha/1]).
 :- use_module(menu).
 :- encoding(utf8).
 
@@ -131,16 +131,19 @@ exibeQuestao(Perguntinha) :-
 	nth0(2, Perguntinha, AlternativaB),
 	nth0(3, Perguntinha, AlternativaC),
 	nth0(4, Perguntinha, AlternativaD),
-	nth0(6, Perguntinha, DicaPerguntinha),
 	
 		string_concat("a) ", AlternativaA, LetraA),
 		string_concat("b) ", AlternativaB, LetraB),
 		string_concat("c) ", AlternativaC, LetraC),
 		string_concat("d) ", AlternativaD, LetraD),
-		string_concat("e) ", DicaPerguntinha, LetraE),
+		string_concat("e) ", "dica", LetraE),
 		write(Enunciado), nl,
 		write(LetraA), nl,
 		write(LetraB), nl,
 		write(LetraC), nl,
 		write(LetraD), nl,
 		write(LetraE), nl.
+
+exibeDica(Perguntinha) :-
+	nth0(6, Perguntinha, DicaPerguntinha),
+	write(DicaPerguntinha), nl.

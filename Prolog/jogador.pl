@@ -33,7 +33,7 @@ inicia_jogo(Nome, UltimaPontuacao, Apex, QuestoesSorteadas) :-
 	random_between(0, TotalQuestoes, Rand),
 	getQuestao(Rand, Q),
 	exibeQuestao(Q),
-	get_time(exibiu),
+	get_time(Exibiu),
 	append(QuestoesSorteadas, [Rand], QuestoesSorteadas1),
 	read(Alternativa),
 	string_lower(Alternativa, Alternativa1),

@@ -8,6 +8,15 @@ setup_bd :-
 arquivo_vazio :-
 	\+(predicate_property(perguntinha(_), dynamic)).
 
+valida_gabarito(Letra) :-
+    (   Letra @>= "a",
+        Letra @=< "d"
+     -> true
+     ;  writeln("Entrada incorreta! Digite uma letra entre 'a' e 'd'."),
+	 read_line_to_string(user_input, Gabarito),
+	 string_lower(Gabarito, NovaLetra),
+	 valida_gabarito(NovaLetra)).
+
 cadastra_perguntinha :-
 	setup_bd,
 	nl, writeln("Insira sua Perguntinha: "),
@@ -20,8 +29,10 @@ cadastra_perguntinha :-
 	read_line_to_string(user_input, AlternativaC),
 	nl, writeln("Insira a alternativa D da Perguntinha: "),
 	read_line_to_string(user_input, AlternativaD),
-	nl, writeln("Insira o gabarito da Perguntinha: "),
+	nl, writeln("Insira o gabarito da Perguntinha (de 'a' a 'd'): "),
 	read_line_to_string(user_input, Gabarito),
+	string_lower(Gabarito, Letra),
+	valida_gabarito(Letra),
 	nl, writeln("Insira a dica da Perguntinha: "),
 	read_line_to_string(user_input, Dica),
 	assertz(perguntinha(Questao, AlternativaA, AlternativaB, AlternativaC, AlternativaD, Gabarito, Dica)),

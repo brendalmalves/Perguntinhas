@@ -1,10 +1,9 @@
-:- module('Menu', [segundoMenuAdministrador/0]).
+:- module('menu', [segundoMenuAdministrador/0, main/0]).
 :- use_module(administrador).
 :- use_module(ranking).
 :- use_module(sobre).
 :- use_module(perguntinha).
 :- use_module(jogador).
-
 :- encoding(utf8).
 
 main :-

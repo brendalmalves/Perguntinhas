@@ -41,13 +41,13 @@ inicia_jogo(Nome, UltimaPontuacao, Apex, QuestoesSorteadas) :-
 		-> 
 		exibeDica(Q),
 		read(Alternativa2),
-		get_time(respondeu),
+		get_time(Respondeu),
 		string_lower(Alternativa2, Alternativa3),
-		timediff(exibiu, respondeu, dif),
+		timediff(Exibiu, Respondeu, DiffTempo),
 		respondeQuestao(Q, Alternativa3, Pontuacao, DiffTempo, True, PontuacaoAtual)
 		;
-		get_time(respondeu),
-		timediff(exibiu, respondeu, dif),
+		get_time(Respondeu),
+		timediff(Exibiu, Respondeu, DiffTempo),
 		respondeQuestao(Q, Alternativa1, Pontuacao, DiffTempo, False, PontuacaoAtual),
 			(Pontuacao >= Apex 
 				-> 

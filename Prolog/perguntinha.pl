@@ -1,4 +1,5 @@
-:- module('perguntinha', [cadastra_perguntinha/0, remove_perguntinha/0, getQuestao/2, getTotalQuestoes/1, teste/0, exibeQuestoes/0, exibeQuestao/1, exibeDica/1, existe_perguntinha/1]).
+:- module('perguntinha', [cadastra_perguntinha/0, remove_perguntinha/0, getQuestao/2, getTotalQuestoes/1,
+	teste/0, exibeQuestoes/0, exibeQuestao/1, exibeDica/1, existe_perguntinha/1, getGabarito/2]).
 :- use_module(menu).
 :- encoding(utf8).
 
@@ -97,6 +98,9 @@ exclui_perguntinha(NumPerguntinha) :-
 getQuestao(NumPerguntinha, Perguntinha) :-
 	get_questoes(Queries),
 	nth0(NumPerguntinha, Queries, Perguntinha).
+
+getGabarito(Perguntinha, Gabarito) :-
+	nth0(5, Perguntinha, Gabarito).
 
 teste :-
 	get_questoes(Queries),

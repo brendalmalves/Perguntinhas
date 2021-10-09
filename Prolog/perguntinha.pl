@@ -9,14 +9,15 @@ setup_bd :-
 arquivo_vazio :-
 	\+(predicate_property(perguntinha(_), dynamic)).
 
-valida_gabarito(Letra) :-
+valida_gabarito(Letra, LetraVerificada) :-
     (   Letra @>= "a",
         Letra @=< "d"
-     -> true
+     -> LetraVerificada = Letra, true
      ;  writeln("Entrada incorreta! Digite uma letra entre 'a' e 'd'."),
 	 read_line_to_string(user_input, Gabarito),
 	 string_lower(Gabarito, NovaLetra),
-	 valida_gabarito(NovaLetra)).
+	 write(LetraVerificada),
+	 valida_gabarito(NovaLetra, LetraVerificada)).
 
 cadastra_perguntinha :-
 	setup_bd,
@@ -33,10 +34,11 @@ cadastra_perguntinha :-
 	nl, writeln("Insira o gabarito da Perguntinha (de 'a' a 'd'): "),
 	read_line_to_string(user_input, Gabarito),
 	string_lower(Gabarito, Letra),
-	valida_gabarito(Letra),
+	valida_gabarito(Letra, LetraVerificada),
+	write(LetraVerificada),
 	nl, writeln("Insira a dica da Perguntinha: "),
 	read_line_to_string(user_input, Dica),
-	assertz(perguntinha(Questao, AlternativaA, AlternativaB, AlternativaC, AlternativaD, Gabarito, Dica)),
+	assertz(perguntinha(Questao, AlternativaA, AlternativaB, AlternativaC, AlternativaD, LetraVerificada, Dica)),
 	adiciona_perguntinha,
 	writeln("Perguntinha cadastrada com sucesso!"), nl.
 
@@ -97,7 +99,7 @@ exclui_perguntinha(NumPerguntinha) :-
 
 getQuestao(NumPerguntinha, Perguntinha) :-
 	get_questoes(Queries),
-	nth0(NumPerguntinha, Queries, Perguntinha).
+	nth1(NumPerguntinha, Queries, Perguntinha).
 
 getGabarito(Perguntinha, Gabarito) :-
 	nth0(5, Perguntinha, Gabarito).
@@ -141,12 +143,14 @@ exibeQuestao(Perguntinha) :-
 		string_concat("c) ", AlternativaC, LetraC),
 		string_concat("d) ", AlternativaD, LetraD),
 		string_concat("e) ", "dica", LetraE),
+		string_concat("f) ", "encerrar partida", LetraF),
 		write(Enunciado), nl,
 		write(LetraA), nl,
 		write(LetraB), nl,
 		write(LetraC), nl,
 		write(LetraD), nl,
-		write(LetraE), nl.
+		write(LetraE), nl,
+		write(LetraF), nl.
 
 exibeDica(Perguntinha) :-
 	nth0(6, Perguntinha, DicaPerguntinha),

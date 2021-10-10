@@ -2,6 +2,7 @@
 :- use_module(ranking).
 :- use_module(perguntinha).
 :- use_module(menu).
+:- use_module(library(clpfd)).
 :- encoding(utf8).
 
 % sorteia_questao(TotalQuestoes, QuestoesSorteadas, Rand):- 
@@ -18,11 +19,16 @@
 % 	(member(Rand, QuestoesSorteadas)-> sorteia_questao(TotalQuestoes, QuestoesSorteadas, NovaQ), Rand is NovaQ, true;
 % 	true).
 
+% sorteia_questao(TotalQuestoes, QuestoesSorteadas, Rand):- 
+% 	random_between(1, TotalQuestoes, Ale),
+% 	(member(Ale, QuestoesSorteadas)-> sorteia_questao(TotalQuestoes, QuestoesSorteadas, Rand); true),
+% 	write(Ale),
+% 	Rand is Ale + 0, true.
+
 sorteia_questao(TotalQuestoes, QuestoesSorteadas, Rand):- 
-	random_between(1, TotalQuestoes, Ale),
-	(member(Ale, QuestoesSorteadas)-> sorteia_questao(TotalQuestoes, QuestoesSorteadas, Rand); true),
-	write(Ale),
-	Rand is Ale + 0, true.
+    Rand in 1..TotalQuestoes,
+    maplist(#\=(Rand), QuestoesSorteadas),
+    indomain(Rand).
 
 valida_resposta(Letra, LetraVerificada) :-
     (   Letra @>= "a",
